@@ -30,12 +30,12 @@ const NeonHeader = ({
 
         {/* Center Section */}
         <View style={styles.centerSection}>
-          {title && (
+          {!!title && (
             <Text style={styles.title} numberOfLines={1}>
               {title}
             </Text>
           )}
-          {subtitle && (
+          {!!subtitle && (
             <Text style={styles.subtitle} numberOfLines={1}>
               {subtitle}
             </Text>

@@ -1,41 +1,105 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Share, Linking, Alert, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { loadChapter } from '../data/bibleData';
+import { loadChapter, BIBLE_BOOKS } from '../data/bibleData';
+import { fetchChapterDeno } from '../services/bibleApiDeno';
 import { fetchChapter } from '../services/bibleApi';
+import { fetchChapterBolls } from '../services/bibleApiBolls';
+import { getBibleCache, saveBibleCache } from '../services/bibleCache';
 
 export default function BibleReaderScreen({ route, navigation }) {
-  const { book, chapter } = route.params;
+  const { book: initialBook, chapter: initialChapter } = route.params;
+  const [currentBook, setCurrentBook] = useState(initialBook);
+  const [currentChapter, setCurrentChapter] = useState(initialChapter);
   const [verses, setVerses] = useState({});
   const [selectedVerses, setSelectedVerses] = useState([]);
   const [fontSize, setFontSize] = useState(16);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  const loadVerses = useCallback(async (bookId, chapterNum) => {
+    setLoading(true);
+    setError(false);
+    try {
+      // 0. Vérifier le cache d'abord (ultra rapide)
+      let loadedVerses = await getBibleCache(bookId, chapterNum);
+      
+      if (!loadedVerses || Object.keys(loadedVerses).length === 0) {
+        // 1. Essayer Deno Bible API (200+ versions, gratuit, rapide)
+        loadedVerses = await fetchChapterDeno(bookId, chapterNum);
+        
+        // 2. Si échec, essayer bible-api.com
+        if (!loadedVerses || Object.keys(loadedVerses).length === 0) {
+          loadedVerses = await fetchChapter(bookId, chapterNum);
+        }
+        
+        // 3. Si échec, essayer Bolls Life API
+        if (!loadedVerses || Object.keys(loadedVerses).length === 0) {
+          loadedVerses = await fetchChapterBolls(bookId, chapterNum);
+        }
+        
+        // 4. Si échec, utiliser données locales
+        if (!loadedVerses || Object.keys(loadedVerses).length === 0) {
+          loadedVerses = await loadChapter(bookId, chapterNum);
+        }
+        
+        // Sauvegarder dans le cache si on a trouvé des versets
+        if (loadedVerses && Object.keys(loadedVerses).length > 0) {
+          await saveBibleCache(bookId, chapterNum, loadedVerses);
+        }
+      }
+      
+      // Vérifier si on a des versets
+      if (loadedVerses && Object.keys(loadedVerses).length > 0) {
+        setVerses(loadedVerses);
+        setError(false);
+      } else {
+        setError(true);
+        setVerses({});
+      }
+    } catch (err) {
+      console.error('Error loading verses:', err);
+      setError(true);
+      setVerses({});
+    }
+    setLoading(false);
+  }, []);
 
   useEffect(() => {
-    const loadVerses = async () => {
-      setLoading(true);
-      try {
-        // Essayer l'API d'abord
-        const apiVerses = await fetchChapter(book.id, chapter);
-        if (apiVerses && Object.keys(apiVerses).length > 0) {
-          setVerses(apiVerses);
-        } else {
-          // Fallback sur données locales
-          const localVerses = await loadChapter(book.id, chapter);
-          if (localVerses && Object.keys(localVerses).length > 0) {
-            setVerses(localVerses);
-          } else {
-            setVerses({ 1: 'Chapitre non disponible.' });
-          }
-        }
-      } catch (error) {
-        setVerses({ 1: 'Erreur de chargement.' });
+    loadVerses(currentBook.id, currentChapter);
+  }, [currentBook.id, currentChapter, loadVerses]);
+
+  const navigateChapter = (direction) => {
+    let nextChapter = currentChapter + direction;
+    
+    if (nextChapter < 1) {
+      // Aller au livre précédent, dernier chapitre
+      const currentIndex = BIBLE_BOOKS.findIndex(b => b.id === currentBook.id);
+      if (currentIndex > 0) {
+        const prevBook = BIBLE_BOOKS[currentIndex - 1];
+        setCurrentBook(prevBook);
+        setCurrentChapter(prevBook.chapters);
+        setSelectedVerses([]);
+      } else {
+        Alert.alert('Début de la Bible', 'Vous êtes au premier chapitre du premier livre.');
       }
-      setLoading(false);
-    };
-    loadVerses();
-  }, [book.id, chapter]);
+    } else if (nextChapter > currentBook.chapters) {
+      // Aller au livre suivant, chapitre 1
+      const currentIndex = BIBLE_BOOKS.findIndex(b => b.id === currentBook.id);
+      if (currentIndex < BIBLE_BOOKS.length - 1) {
+        const nextBook = BIBLE_BOOKS[currentIndex + 1];
+        setCurrentBook(nextBook);
+        setCurrentChapter(1);
+        setSelectedVerses([]);
+      } else {
+        Alert.alert('Fin de la Bible', 'Vous êtes au dernier chapitre du dernier livre.');
+      }
+    } else {
+      setCurrentChapter(nextChapter);
+      setSelectedVerses([]);
+    }
+  };
 
   const toggleVerse = (verseNum) => {
     setSelectedVerses(prev =>
@@ -48,7 +112,7 @@ export default function BibleReaderScreen({ route, navigation }) {
       Alert.alert('Sélection vide', 'Veuillez sélectionner au moins un verset');
       return;
     }
-    const text = selectedVerses.map(v => `${book.name} ${chapter}:${v}\n${verses[v]}`).join('\n\n');
+    const text = selectedVerses.map(v => `${currentBook.name} ${currentChapter}:${v}\n${verses[v]}`).join('\n\n');
     const message = `📖 ${text}\n\n🙏 Partagé depuis Merci Saint-Esprit`;
     const url = `whatsapp://send?text=${encodeURIComponent(message)}`;
     
@@ -64,12 +128,12 @@ export default function BibleReaderScreen({ route, navigation }) {
       Alert.alert('Sélection vide', 'Veuillez sélectionner au moins un verset');
       return;
     }
-    const text = selectedVerses.map(v => `${book.name} ${chapter}:${v}\n${verses[v]}`).join('\n\n');
+    const text = selectedVerses.map(v => `${currentBook.name} ${currentChapter}:${v}\n${verses[v]}`).join('\n\n');
     await Share.share({ message: `📖 ${text}\n\n🙏 Partagé depuis Merci Saint-Esprit` });
   };
 
   const saveBookmark = () => {
-    Alert.alert('Signet ajouté', `${book.name} ${chapter} a été ajouté à vos signets`);
+    Alert.alert('Signet ajouté', `${currentBook.name} ${currentChapter} a été ajouté à vos signets`);
   };
 
   return (
@@ -80,8 +144,8 @@ export default function BibleReaderScreen({ route, navigation }) {
             <Ionicons name="arrow-back" size={24} color="#FFF" />
           </TouchableOpacity>
           <View style={styles.headerCenter}>
-            <Text style={styles.headerTitle}>{book.name} {chapter}</Text>
-            <Text style={styles.headerSubtitle}>{Object.keys(verses).length} versets</Text>
+            <Text style={styles.headerTitle}>{currentBook.name} {currentChapter}</Text>
+            <Text style={styles.headerSubtitle}>{loading ? '...' : `${Object.keys(verses).length}`} versets</Text>
           </View>
           <TouchableOpacity onPress={saveBookmark} style={styles.bookmarkBtn}>
             <Ionicons name="bookmark-outline" size={24} color="#FFF" />
@@ -91,7 +155,7 @@ export default function BibleReaderScreen({ route, navigation }) {
 
       {selectedVerses.length > 0 && (
         <View style={styles.selectionBar}>
-          <Text style={styles.selectionText}>{selectedVerses.length} verset(s) sélectionné(s)</Text>
+          <Text style={styles.selectionText}>{`${selectedVerses.length}`} verset(s) sélectionné(s)</Text>
           <View style={styles.selectionActions}>
             <TouchableOpacity onPress={shareToWhatsApp} style={styles.actionBtn}>
               <Ionicons name="logo-whatsapp" size={22} color="#25D366" />
@@ -112,6 +176,17 @@ export default function BibleReaderScreen({ route, navigation }) {
             <ActivityIndicator size="large" color="#7C3AED" />
             <Text style={styles.loadingText}>Chargement des versets...</Text>
           </View>
+        ) : error ? (
+          <View style={styles.emptyContainer}>
+            <Ionicons name="alert-circle-outline" size={64} color="#EF4444" />
+            <Text style={styles.emptyText}>Erreur de chargement</Text>
+            <TouchableOpacity 
+              style={styles.retryBtn} 
+              onPress={() => loadVerses(currentBook.id, currentChapter)}
+            >
+              <Text style={styles.retryBtnText}>Réessayer</Text>
+            </TouchableOpacity>
+          </View>
         ) : Object.keys(verses).length === 0 ? (
           <View style={styles.emptyContainer}>
             <Ionicons name="book-outline" size={64} color="#D1D5DB" />
@@ -130,15 +205,27 @@ export default function BibleReaderScreen({ route, navigation }) {
             </TouchableOpacity>
           ))
         )}
+        <View style={{ height: 40 }} />
       </ScrollView>
 
       <View style={styles.bottomBar}>
-        <TouchableOpacity onPress={() => setFontSize(Math.max(12, fontSize - 2))} style={styles.fontBtn}>
-          <Ionicons name="remove-circle-outline" size={24} color="#7C3AED" />
+        <TouchableOpacity onPress={() => navigateChapter(-1)} style={styles.navBtn}>
+          <Ionicons name="chevron-back" size={28} color="#7C3AED" />
+          <Text style={styles.navLabel}>Préc.</Text>
         </TouchableOpacity>
-        <Text style={styles.fontLabel}>Taille: {fontSize}px</Text>
-        <TouchableOpacity onPress={() => setFontSize(Math.min(24, fontSize + 2))} style={styles.fontBtn}>
-          <Ionicons name="add-circle-outline" size={24} color="#7C3AED" />
+
+        <View style={styles.fontControls}>
+          <TouchableOpacity onPress={() => setFontSize(Math.max(12, fontSize - 2))} style={styles.fontBtn}>
+            <Ionicons name="remove-circle-outline" size={24} color="#7C3AED" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setFontSize(Math.min(24, fontSize + 2))} style={styles.fontBtn}>
+            <Ionicons name="add-circle-outline" size={24} color="#7C3AED" />
+          </TouchableOpacity>
+        </View>
+
+        <TouchableOpacity onPress={() => navigateChapter(1)} style={styles.navBtn}>
+          <Text style={styles.navLabel}>Suiv.</Text>
+          <Ionicons name="chevron-forward" size={28} color="#7C3AED" />
         </TouchableOpacity>
       </View>
     </View>
@@ -166,8 +253,13 @@ const styles = StyleSheet.create({
   loadingContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 60 },
   loadingText: { marginTop: 16, fontSize: 15, color: '#6B7280', fontWeight: '600' },
   emptyContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 60 },
-  emptyText: { marginTop: 16, fontSize: 15, color: '#9CA3AF', fontWeight: '600' },
-  bottomBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFF', paddingVertical: 16, borderTopWidth: 1, borderTopColor: '#E5E7EB', gap: 20, shadowColor: '#000', shadowOffset: { width: 0, height: -2 }, shadowOpacity: 0.05, shadowRadius: 4 },
+  emptyText: { marginTop: 16, fontSize: 15, color: '#9CA3AF', fontWeight: '600', textAlign: 'center' },
+  retryBtn: { marginTop: 20, backgroundColor: '#7C3AED', paddingHorizontal: 24, paddingVertical: 12, borderRadius: 12 },
+  retryBtnText: { color: '#FFF', fontWeight: '700' },
+  bottomBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#FFF', paddingVertical: 12, paddingHorizontal: 20, borderTopWidth: 1, borderTopColor: '#E5E7EB', shadowColor: '#000', shadowOffset: { width: 0, height: -2 }, shadowOpacity: 0.05, shadowRadius: 4 },
+  navBtn: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  navLabel: { fontSize: 14, fontWeight: '700', color: '#7C3AED' },
+  fontControls: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   fontBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
   fontLabel: { fontSize: 14, fontWeight: '700', color: '#6B7280', letterSpacing: -0.2 }
 });

@@ -1,14 +1,16 @@
 import React, { useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Animated, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { COLORS, SPACING, FONT_SIZES, FONT_WEIGHTS, BORDER_RADIUS, SHADOWS } from '../constants/theme';
+import { getVideoThumbnail } from '../services/cloudinaryService';
 
 const VideoCard = ({ video, onPress }) => {
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
   const handlePressIn = () => {
     Animated.spring(scaleAnim, {
-      toValue: 0.98,
+      toValue: 0.97,
       useNativeDriver: true,
       friction: 8,
     }).start();
@@ -22,61 +24,85 @@ const VideoCard = ({ video, onPress }) => {
     }).start();
   };
 
+  const thumbnailUrl = video.thumbnailUrl || getVideoThumbnail(video.mediaUrl);
+
   return (
     <TouchableOpacity
       onPress={onPress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      activeOpacity={0.9}
+      activeOpacity={1}
     >
       <Animated.View style={[styles.card, { transform: [{ scale: scaleAnim }] }]}>
-        {/* Thumbnail */}
+        {/* Thumbnail avec overlay gradient */}
         <View style={styles.thumbnail}>
-          {video.thumbnailUrl ? (
-            <Image source={{ uri: video.thumbnailUrl }} style={styles.image} />
+          {thumbnailUrl ? (
+            <Image source={{ uri: thumbnailUrl }} style={styles.image} />
           ) : (
-            <View style={styles.placeholderImage}>
-              <Ionicons name="play-circle" size={48} color={COLORS.primary} />
-            </View>
+            <LinearGradient
+              colors={['#A855F7', '#7C3AED']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.placeholderGradient}
+            >
+              <Ionicons name="play-circle" size={56} color="rgba(255,255,255,0.9)" />
+            </LinearGradient>
           )}
           
-          {/* Duration Badge */}
-          {video.duration && (
+          {/* Gradient overlay subtil */}
+          <LinearGradient
+            colors={['transparent', 'rgba(0,0,0,0.7)']}
+            style={styles.gradientOverlay}
+          />
+
+          {/* Duration Badge - Design moderne */}
+          {!!video.duration && (
             <View style={styles.durationBadge}>
-              <Text style={styles.durationText}>{video.duration}</Text>
+              <View style={styles.durationInner}>
+                <Ionicons name="time-outline" size={10} color="#FFF" />
+                <Text style={styles.durationText}>{video.duration}</Text>
+              </View>
             </View>
           )}
 
-          {/* Play Button Overlay */}
+          {/* Play Button - Plus subtil et moderne */}
           <View style={styles.playOverlay}>
             <View style={styles.playButton}>
-              <Ionicons name="play" size={20} color={COLORS.textInverse} />
+              <LinearGradient
+                colors={['rgba(168, 85, 247, 0.95)', 'rgba(124, 58, 237, 0.95)']}
+                style={styles.playGradient}
+              >
+                <Ionicons name="play" size={22} color="#FFF" />
+              </LinearGradient>
             </View>
           </View>
         </View>
 
-        {/* Content */}
+        {/* Content - Design épuré */}
         <View style={styles.content}>
           <Text style={styles.title} numberOfLines={2}>
             {video.title}
           </Text>
           
           <View style={styles.meta}>
-            <View style={styles.metaItem}>
-              <Ionicons name="person-outline" size={14} color={COLORS.textTertiary} />
-              <Text style={styles.metaText} numberOfLines={1}>
+            <View style={styles.authorRow}>
+              <View style={styles.miniAvatar}>
+                <Ionicons name="person" size={12} color="#A855F7" />
+              </View>
+              <Text style={styles.authorText} numberOfLines={1}>
                 {video.authorName || 'Anonyme'}
               </Text>
             </View>
             
             <View style={styles.stats}>
               <View style={styles.statItem}>
-                <Ionicons name="eye-outline" size={14} color={COLORS.textTertiary} />
+                <Ionicons name="eye-outline" size={13} color="#9CA3AF" />
                 <Text style={styles.statText}>{formatNumber(video.views || 0)}</Text>
               </View>
+              <View style={styles.statDivider} />
               <View style={styles.statItem}>
-                <Ionicons name="heart-outline" size={14} color={COLORS.textTertiary} />
-                <Text style={styles.statText}>{video.likes?.length || 0}</Text>
+                <Ionicons name="heart-outline" size={13} color="#9CA3AF" />
+                <Text style={styles.statText}>{`${video.likes?.length || 0}`}</Text>
               </View>
             </View>
           </View>
@@ -94,24 +120,19 @@ const formatNumber = (num) => {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: COLORS.surface,
-    borderRadius: BORDER_RADIUS.lg,
-    borderWidth: 1,
-    borderColor: COLORS.border,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
     overflow: 'hidden',
-    ...SHADOWS.sm,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
+    elevation: 3,
   },
   thumbnail: {
     width: '100%',
     height: 180,
     overflow: 'hidden',
-  },
-  backgroundIcon: {
-    position: 'absolute',
-    right: -30,
-    top: 20,
-    opacity: 1,
-    backgroundColor: COLORS.gray50,
     position: 'relative',
   },
   image: {
@@ -119,26 +140,39 @@ const styles = StyleSheet.create({
     height: '100%',
     resizeMode: 'cover',
   },
-  placeholderImage: {
+  placeholderGradient: {
     width: '100%',
     height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: COLORS.primaryBg,
+  },
+  gradientOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: '40%',
   },
   durationBadge: {
     position: 'absolute',
-    bottom: SPACING.sm,
-    right: SPACING.sm,
-    backgroundColor: 'rgba(0, 0, 0, 0.75)',
-    paddingHorizontal: SPACING.sm,
+    bottom: 10,
+    right: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.85)',
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  durationInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: BORDER_RADIUS.xs,
   },
   durationText: {
-    fontSize: FONT_SIZES.xs,
-    fontWeight: FONT_WEIGHTS.semibold,
-    color: COLORS.textInverse,
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#FFF',
+    letterSpacing: 0.3,
   },
   playOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -146,55 +180,75 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   playButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: COLORS.primary,
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    overflow: 'hidden',
+    shadowColor: '#A855F7',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 6,
+  },
+  playGradient: {
+    width: '100%',
+    height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    ...SHADOWS.md,
   },
   content: {
-    padding: SPACING.base,
+    padding: 14,
   },
   title: {
-    fontSize: FONT_SIZES.md,
-    fontWeight: FONT_WEIGHTS.semibold,
-    color: COLORS.text,
-    marginBottom: SPACING.sm,
-    lineHeight: 20,
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#111827',
+    marginBottom: 10,
+    lineHeight: 21,
+    letterSpacing: -0.2,
   },
   meta: {
+    gap: 8,
+  },
+  authorRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    gap: 6,
   },
-  metaItem: {
-    flexDirection: 'row',
+  miniAvatar: {
+    width: 20,
+    height: 20,
+    borderRadius: 6,
+    backgroundColor: '#F3E8FF',
     alignItems: 'center',
-    gap: 4,
-    flex: 1,
-    marginRight: SPACING.sm,
+    justifyContent: 'center',
   },
-  metaText: {
-    fontSize: FONT_SIZES.xs,
-    color: COLORS.textTertiary,
+  authorText: {
+    fontSize: 13,
+    color: '#6B7280',
+    fontWeight: '600',
     flex: 1,
   },
   stats: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: SPACING.sm,
+    gap: 10,
   },
   statItem: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
   },
+  statDivider: {
+    width: 3,
+    height: 3,
+    borderRadius: 1.5,
+    backgroundColor: '#D1D5DB',
+  },
   statText: {
-    fontSize: FONT_SIZES.xs,
-    color: COLORS.textTertiary,
-    fontWeight: FONT_WEIGHTS.medium,
+    fontSize: 12,
+    color: '#9CA3AF',
+    fontWeight: '600',
   },
 });
 

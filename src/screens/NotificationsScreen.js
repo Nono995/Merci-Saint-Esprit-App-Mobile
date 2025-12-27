@@ -15,22 +15,39 @@ export default function NotificationsScreen({ navigation }) {
   }, []);
 
   const loadNotifications = () => {
+    // Requête simplifiée sans index composite
     const q = query(
       collection(db, 'notifications'),
-      where('sent', '==', true),
       orderBy('sentDate', 'desc')
     );
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const notifs = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        time: getTimeAgo(doc.data().sentDate),
-      }));
-      setNotifications(notifs);
-      setLoading(false);
-      setRefreshing(false);
-    });
+    const unsubscribe = onSnapshot(
+      q, 
+      (snapshot) => {
+        console.log('Notifications received:', snapshot.docs.length);
+        // Filtrer côté client pour les notifications envoyées
+        const notifs = snapshot.docs
+          .map(doc => {
+            const data = doc.data();
+            return {
+              id: doc.id,
+              ...data,
+              time: getTimeAgo(data.sentDate),
+            };
+          })
+          .filter(notif => notif.sent === true); // Filtrer côté client
+        
+        console.log('Filtered notifications:', notifs.length);
+        setNotifications(notifs);
+        setLoading(false);
+        setRefreshing(false);
+      },
+      (error) => {
+        console.error('Error loading notifications:', error);
+        setLoading(false);
+        setRefreshing(false);
+      }
+    );
 
     return unsubscribe;
   };
@@ -100,7 +117,7 @@ export default function NotificationsScreen({ navigation }) {
           <Text style={styles.headerTitle}>Notifications</Text>
           {unreadCount > 0 && (
             <View style={styles.unreadBadge}>
-              <Text style={styles.unreadBadgeText}>{unreadCount}</Text>
+              <Text style={styles.unreadBadgeText}>{`${unreadCount}`}</Text>
             </View>
           )}
         </View>

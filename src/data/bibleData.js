@@ -1,5 +1,6 @@
 // Bible Louis Segond 1910 - Structure optimisée
 export const BIBLE_BOOKS = [
+  // Ancien Testament
   { id: 'gen', name: 'Genèse', testament: 'AT', chapters: 50 },
   { id: 'exo', name: 'Exode', testament: 'AT', chapters: 40 },
   { id: 'lev', name: 'Lévitique', testament: 'AT', chapters: 27 },
@@ -12,12 +13,35 @@ export const BIBLE_BOOKS = [
   { id: '2sa', name: '2 Samuel', testament: 'AT', chapters: 24 },
   { id: '1ro', name: '1 Rois', testament: 'AT', chapters: 22 },
   { id: '2ro', name: '2 Rois', testament: 'AT', chapters: 25 },
+  { id: '1ch', name: '1 Chroniques', testament: 'AT', chapters: 29 },
+  { id: '2ch', name: '2 Chroniques', testament: 'AT', chapters: 36 },
+  { id: 'esd', name: 'Esdras', testament: 'AT', chapters: 10 },
+  { id: 'neh', name: 'Néhémie', testament: 'AT', chapters: 13 },
+  { id: 'est', name: 'Esther', testament: 'AT', chapters: 10 },
+  { id: 'job', name: 'Job', testament: 'AT', chapters: 42 },
   { id: 'psa', name: 'Psaumes', testament: 'AT', chapters: 150 },
   { id: 'pro', name: 'Proverbes', testament: 'AT', chapters: 31 },
   { id: 'ecc', name: 'Ecclésiaste', testament: 'AT', chapters: 12 },
   { id: 'can', name: 'Cantique', testament: 'AT', chapters: 8 },
   { id: 'isa', name: 'Ésaïe', testament: 'AT', chapters: 66 },
   { id: 'jer', name: 'Jérémie', testament: 'AT', chapters: 52 },
+  { id: 'lam', name: 'Lamentations', testament: 'AT', chapters: 5 },
+  { id: 'eze', name: 'Ézéchiel', testament: 'AT', chapters: 48 },
+  { id: 'dan', name: 'Daniel', testament: 'AT', chapters: 12 },
+  { id: 'ose', name: 'Osée', testament: 'AT', chapters: 14 },
+  { id: 'joe', name: 'Joël', testament: 'AT', chapters: 3 },
+  { id: 'amo', name: 'Amos', testament: 'AT', chapters: 9 },
+  { id: 'abd', name: 'Abdias', testament: 'AT', chapters: 1 },
+  { id: 'jon', name: 'Jonas', testament: 'AT', chapters: 4 },
+  { id: 'mic', name: 'Michée', testament: 'AT', chapters: 7 },
+  { id: 'nah', name: 'Nahum', testament: 'AT', chapters: 3 },
+  { id: 'hab', name: 'Habacuc', testament: 'AT', chapters: 3 },
+  { id: 'sop', name: 'Sophonie', testament: 'AT', chapters: 3 },
+  { id: 'agg', name: 'Aggée', testament: 'AT', chapters: 2 },
+  { id: 'zac', name: 'Zacharie', testament: 'AT', chapters: 14 },
+  { id: 'mal', name: 'Malachie', testament: 'AT', chapters: 4 },
+
+  // Nouveau Testament
   { id: 'mat', name: 'Matthieu', testament: 'NT', chapters: 28 },
   { id: 'mar', name: 'Marc', testament: 'NT', chapters: 16 },
   { id: 'luc', name: 'Luc', testament: 'NT', chapters: 24 },
@@ -35,11 +59,15 @@ export const BIBLE_BOOKS = [
   { id: '1ti', name: '1 Timothée', testament: 'NT', chapters: 6 },
   { id: '2ti', name: '2 Timothée', testament: 'NT', chapters: 4 },
   { id: 'tit', name: 'Tite', testament: 'NT', chapters: 3 },
+  { id: 'phm', name: 'Philémon', testament: 'NT', chapters: 1 },
   { id: 'heb', name: 'Hébreux', testament: 'NT', chapters: 13 },
   { id: 'jam', name: 'Jacques', testament: 'NT', chapters: 5 },
   { id: '1pe', name: '1 Pierre', testament: 'NT', chapters: 5 },
   { id: '2pe', name: '2 Pierre', testament: 'NT', chapters: 3 },
   { id: '1jo', name: '1 Jean', testament: 'NT', chapters: 5 },
+  { id: '2jo', name: '2 Jean', testament: 'NT', chapters: 1 },
+  { id: '3jo', name: '3 Jean', testament: 'NT', chapters: 1 },
+  { id: 'jud', name: 'Jude', testament: 'NT', chapters: 1 },
   { id: 'rev', name: 'Apocalypse', testament: 'NT', chapters: 22 }
 ];
 
@@ -128,23 +156,76 @@ export const SAMPLE_VERSES = {
     18: "Jésus, s'étant approché, leur parla ainsi: Tout pouvoir m'a été donné dans le ciel et sur la terre.",
     19: "Allez, faites de toutes les nations des disciples, les baptisant au nom du Père, du Fils et du Saint Esprit,",
     20: "et enseignez-leur à observer tout ce que je vous ai prescrit. Et voici, je suis avec vous tous les jours, jusqu'à la fin du monde."
+  },
+  'rut-1': {
+    1: "Du temps des juges, il y eut une famine dans le pays. Un homme de Bethléhem de Juda partit, avec sa femme et ses deux fils, pour faire un séjour dans le pays de Moab.",
+    2: "Le nom de cet homme était Élimélec, celui de sa femme Naomi, et ses deux fils s'appelaient Machlon et Kiljon; ils étaient Éphratiens, de Bethléhem de Juda. Arrivés au pays de Moab, ils y fixèrent leur demeure.",
+    3: "Élimélec, mari de Naomi, mourut, et elle resta avec ses deux fils.",
+    4: "Ils prirent des femmes Moabites, dont l'une se nommait Orpa, et l'autre Ruth, et ils habitèrent là environ dix ans.",
+    5: "Machlon et Kiljon moururent aussi tous les deux, et Naomi resta privée de ses deux fils et de son mari.",
+    6: "Puis elle se leva, elle et ses belles-filles, afin de quitter le pays de Moab, car elle apprit au pays de Moab que l'Éternel avait visité son peuple et lui avait donné du pain.",
+    16: "Ruth répondit: Ne me presse pas de te laisser, de retourner loin de toi! Où tu iras j'irai, où tu demeureras je demeurerai; ton peuple sera mon peuple, et ton Dieu sera mon Dieu;",
+    17: "où tu mourras je mourrai, et j'y serai enterrée. Que l'Éternel me traite dans toute sa rigueur, si autre chose que la mort vient à me séparer de toi!",
+    22: "Ainsi revinrent du pays de Moab Naomi et sa belle-fille, Ruth la Moabite. Elles arrivèrent à Bethléhem au commencement de la moisson des orges."
+  },
+  'jos-1': {
+    1: "Après la mort de Moïse, serviteur de l'Éternel, l'Éternel dit à Josué, fils de Nun, serviteur de Moïse:",
+    2: "Moïse, mon serviteur, est mort; maintenant, lève-toi, passe ce Jourdain, toi et tout ce peuple, pour entrer dans le pays que je donne aux enfants d'Israël.",
+    3: "Tout lieu que foulera la plante de votre pied, je vous le donne, comme je l'ai dit à Moïse.",
+    5: "Nul ne tiendra devant toi, tant que tu vivras. Je serai avec toi, comme j'ai été avec Moïse; je ne te délaisserai point, je ne t'abandonnerai point.",
+    6: "Fortifie-toi et prends courage, car c'est toi qui mettras ce peuple en possession du pays que j'ai juré à leurs pères de leur donner.",
+    7: "Fortifie-toi seulement et aie bon courage, en agissant fidèlement selon toute la loi que Moïse, mon serviteur, t'a prescrite; ne t'en détourne ni à droite ni à gauche, afin de réussir dans tout ce que tu entreprendras.",
+    8: "Que ce livre de la loi ne s'éloigne point de ta bouche; médite-le jour et nuit, pour agir fidèlement selon tout ce qui y est écrit; car c'est alors que tu auras du succès dans tes entreprises, c'est alors que tu réussiras.",
+    9: "Ne t'ai-je pas donné cet ordre: Fortifie-toi et prends courage? Ne t'effraie point et ne t'épouvante point, car l'Éternel, ton Dieu, est avec toi dans tout ce que tu entreprendras."
+  },
+  'jos-24': {
+    1: "Josué assembla toutes les tribus d'Israël à Sichem, et il convoqua les anciens d'Israël, ses chefs, ses juges et ses officiers. Et ils se présentèrent devant Dieu.",
+    2: "Josué dit à tout le peuple: Ainsi parle l'Éternel, le Dieu d'Israël: Vos pères, Térach, père d'Abraham et père de Nachor, habitaient anciennement de l'autre côté du fleuve, et ils servaient d'autres dieux.",
+    14: "Maintenant, craignez l'Éternel, et servez-le avec intégrité et fidélité. Faites disparaître les dieux qu'ont servis vos pères de l'autre côté du fleuve et en Égypte, et servez l'Éternel.",
+    15: "Et si vous ne trouvez pas bon de servir l'Éternel, choisissez aujourd'hui qui vous voulez servir, ou les dieux que servaient vos pères au delà du fleuve, ou les dieux des Amoréens dans le pays desquels vous habitez. Moi et ma maison, nous servirons l'Éternel.",
+    16: "Le peuple répondit, et dit: Loin de nous la pensée d'abandonner l'Éternel, et de servir d'autres dieux!",
+    24: "Le peuple dit à Josué: Nous servirons l'Éternel, notre Dieu, et nous obéirons à sa voix."
+  },
+  'exo-20': {
+    1: "Alors Dieu prononça toutes ces paroles, en disant:",
+    2: "Je suis l'Éternel, ton Dieu, qui t'ai fait sortir du pays d'Égypte, de la maison de servitude.",
+    3: "Tu n'auras pas d'autres dieux devant ma face.",
+    8: "Souviens-toi du jour du repos, pour le sanctifier.",
+    12: "Honore ton père et ta mère, afin que tes jours se prolongent dans le pays que l'Éternel, ton Dieu, te donne.",
+    13: "Tu ne tueras point.",
+    14: "Tu ne commettras point d'adultère.",
+    15: "Tu ne déroberas point.",
+    16: "Tu ne porteras point de faux témoignage contre ton prochain.",
+    17: "Tu ne convoiteras point la maison de ton prochain; tu ne convoiteras point la femme de ton prochain, ni son serviteur, ni sa servante, ni son boeuf, ni son âne, ni aucune chose qui appartienne à ton prochain."
+  },
+  'isa-40': {
+    1: "Consolez, consolez mon peuple, Dit votre Dieu.",
+    8: "L'herbe sèche, la fleur tombe; Mais la parole de notre Dieu subsiste éternellement.",
+    28: "Ne le sais-tu pas? ne l'as-tu pas appris? C'est le Dieu d'éternité, l'Éternel, Qui a créé les extrémités de la terre; Il ne se fatigue point, il ne se lasse point; On ne peut sonder son intelligence.",
+    29: "Il donne de la force à celui qui est fatigué, Et il augmente la vigueur de celui qui tombe en défaillance.",
+    30: "Les adolescents se fatiguent et se lassent, Et les jeunes hommes chancellent;",
+    31: "Mais ceux qui se confient en l'Éternel renouvellent leur force. Ils prennent le vol comme les aigles; Ils courent, et ne se lassent point, Ils marchent, et ne se fatiguent point."
+  },
+  'eph-2': {
+    8: "Car c'est par la grâce que vous êtes sauvés, par le moyen de la foi. Et cela ne vient pas de vous, c'est le don de Dieu.",
+    9: "Ce n'est point par les oeuvres, afin que personne ne se glorifie.",
+    10: "Car nous sommes son ouvrage, ayant été créés en Jésus Christ pour de bonnes oeuvres, que Dieu a préparées d'avance, afin que nous les pratiquions."
+  },
+  '2ti-3': {
+    16: "Toute Écriture est inspirée de Dieu, et utile pour enseigner, pour convaincre, pour corriger, pour instruire dans la justice,",
+    17: "afin que l'homme de Dieu soit accompli et propre à toute bonne oeuvre."
   }
 };
 
 export const loadChapter = (bookId, chapter) => {
   const key = `${bookId}-${chapter}`;
-  console.log('Chargement chapitre:', key);
+  // console.log('Chargement chapitre:', key); // Commenté pour réduire les logs
   
   if (SAMPLE_VERSES[key]) {
-    console.log('Versets trouvés:', Object.keys(SAMPLE_VERSES[key]).length);
+    // console.log('Versets trouvés:', Object.keys(SAMPLE_VERSES[key]).length); // Commenté
     return Promise.resolve(SAMPLE_VERSES[key]);
   }
   
-  console.log('Chapitre non disponible, retour exemple');
-  return Promise.resolve({
-    1: `📖 ${bookId.toUpperCase()} Chapitre ${chapter}`,
-    2: "Ce chapitre n'est pas encore disponible dans les données locales.",
-    3: "✅ Chapitres disponibles: Jean 3, Psaume 23, Romains 8, Philippiens 4, Proverbes 3, Genèse 1, Matthieu 5-6, Jean 14, Actes 1.",
-    4: "Pour accéder à la Bible complète, configurez l'API Bible (voir BIBLE_API_SETUP.md)"
-  });
+  // console.log('Chapitre non disponible localement, tentative via API'); // Commenté
+  return Promise.resolve(null);
 };

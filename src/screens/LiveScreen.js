@@ -48,7 +48,7 @@ export default function LiveScreen() {
             <View style={styles.liveBadge}>
               <View style={styles.liveDot} />
               <Text style={styles.liveText}>EN DIRECT</Text>
-              <Text style={styles.viewersText}>{viewers} spectateurs</Text>
+              <Text style={styles.viewersText}>{`${viewers}`} spectateurs</Text>
             </View>
           </View>
         ) : (
@@ -71,33 +71,14 @@ export default function LiveScreen() {
           </TouchableOpacity>
         </View>
       </View>
-
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.chatContainer}>
-        <View style={styles.chatHeader}>
-          <Text style={styles.chatTitle}>Chat en direct</Text>
-          <View style={styles.chatBadge}>
-            <Ionicons name="people" size={16} color="#EF4444" />
-            <Text style={styles.chatBadgeText}>{messages.length}</Text>
-          </View>
+      
+      <View style={styles.infoContainer}>
+        <View style={styles.infoIcon}>
+          <Ionicons name="information-circle-outline" size={32} color="#9CA3AF" />
         </View>
-        <FlatList data={messages} keyExtractor={(i) => i.id} inverted contentContainerStyle={styles.chatMessages} renderItem={({ item }) => (
-          <View style={styles.message}>
-            <View style={styles.messageAvatar}>
-              <Text style={styles.messageAvatarText}>{item.author[0]}</Text>
-            </View>
-            <View style={styles.messageContent}>
-              <Text style={styles.messageAuthor}>{item.author}</Text>
-              <Text style={styles.messageText}>{item.text}</Text>
-            </View>
-          </View>
-        )} />
-        <View style={styles.inputRow}>
-          <TextInput value={input} onChangeText={setInput} placeholder="Écrire un message..." placeholderTextColor="#9CA3AF" style={styles.input} onSubmitEditing={sendMessage} returnKeyType="send" />
-          <TouchableOpacity style={styles.sendBtn} onPress={sendMessage}>
-            <Ionicons name="send" size={20} color="#FFF" />
-          </TouchableOpacity>
-        </View>
-      </KeyboardAvoidingView>
+        <Text style={styles.infoTitle}>Interaction en direct</Text>
+        <Text style={styles.infoText}>Le chat en direct est actuellement désactivé pour cette diffusion.</Text>
+      </View>
     </View>
   );
 }
@@ -107,7 +88,7 @@ const styles = StyleSheet.create({
   header: { paddingTop: 50, paddingBottom: 30, paddingHorizontal: 20 },
   headerTitle: { fontSize: 28, fontWeight: '700', color: '#FFF', marginBottom: 4 },
   headerSubtitle: { fontSize: 14, color: '#FEE2E2' },
-  cameraContainer: { flex: 2, backgroundColor: '#000' },
+  cameraContainer: { height: 400, backgroundColor: '#000' },
   livePreview: { flex: 1, position: 'relative' },
   previewGradient: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   liveLabel: { fontSize: 16, fontWeight: '700', color: '#FFF', marginTop: 16 },
@@ -122,19 +103,8 @@ const styles = StyleSheet.create({
   controlBtn: { backgroundColor: 'rgba(255,255,255,0.2)', padding: 12, borderRadius: 24 },
   mainControlBtn: { backgroundColor: '#EF4444', padding: 16, borderRadius: 32 },
   mainControlBtnActive: { backgroundColor: '#DC2626' },
-  chatContainer: { flex: 1, backgroundColor: '#FFF' },
-  chatHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },
-  chatTitle: { fontSize: 16, fontWeight: '700', color: '#111827' },
-  chatBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FEE2E2', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12 },
-  chatBadgeText: { fontSize: 12, fontWeight: '700', color: '#EF4444', marginLeft: 4 },
-  chatMessages: { padding: 16 },
-  message: { flexDirection: 'row', marginBottom: 16 },
-  messageAvatar: { width: 32, height: 32, borderRadius: 16, backgroundColor: '#EF4444', alignItems: 'center', justifyContent: 'center', marginRight: 12 },
-  messageAvatarText: { fontSize: 12, fontWeight: '700', color: '#FFF' },
-  messageContent: { flex: 1 },
-  messageAuthor: { fontSize: 14, fontWeight: '700', color: '#111827', marginBottom: 2 },
-  messageText: { fontSize: 14, color: '#6B7280', lineHeight: 20 },
-  inputRow: { flexDirection: 'row', padding: 16, gap: 8, borderTopWidth: 1, borderTopColor: '#F3F4F6' },
-  input: { flex: 1, backgroundColor: '#F9FAFB', borderRadius: 20, paddingHorizontal: 16, paddingVertical: 10, fontSize: 15, color: '#111827' },
-  sendBtn: { backgroundColor: '#EF4444', padding: 10, borderRadius: 20, alignItems: 'center', justifyContent: 'center' }
+  infoContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 40 },
+  infoIcon: { marginBottom: 16 },
+  infoTitle: { fontSize: 18, fontWeight: '700', color: '#111827', marginBottom: 8 },
+  infoText: { fontSize: 14, color: '#6B7280', textAlign: 'center' }
 });

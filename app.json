@@ -5,25 +5,54 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
-    "sdkVersion": "54.0.0",
+    "sdkVersion": "51.0.0",
     "assetBundlePatterns": [
       "**/*"
     ],
+    "icon": "./assets/logo.png",
+    "splash": {
+      "image": "./assets/logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#7C3AED"
+    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.mercisaintesprit.app"
     },
     "android": {
+      "package": "com.mercisaintesprit.app",
+      "versionCode": 1,
       "adaptiveIcon": {
-        "backgroundColor": "#6B46C1"
+        "foregroundImage": "./assets/logo.png",
+        "backgroundColor": "#7C3AED"
       },
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO",
         "android.permission.READ_EXTERNAL_STORAGE",
-        "android.permission.WRITE_EXTERNAL_STORAGE"
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
       ]
     },
-    "web": {},
+    "web": {
+      "favicon": "./assets/logo.png",
+      "themeColor": "#7C3AED",
+      "backgroundColor": "#FAFAFA",
+      "description": "Application de l'église Merci Saint-Esprit - Vidéos, Podcasts et Bible.",
+      "display": "standalone",
+      "config": {
+        "firebase": {
+          "apiKey": "votre-api-key",
+          "authDomain": "merci-saint-esprit.firebaseapp.com",
+          "projectId": "merci-saint-esprit",
+          "storageBucket": "merci-saint-esprit.appspot.com",
+          "messagingSenderId": "votre-id",
+          "appId": "votre-app-id"
+        }
+      }
+    },
     "plugins": [
       [
         "expo-av",
@@ -46,6 +75,11 @@
           "savePhotosPermission": "Allow $(PRODUCT_NAME) to save photos."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "ff8d3766-9749-4110-a05b-478dc1dd5bac"
+      }
+    }
   }
 }

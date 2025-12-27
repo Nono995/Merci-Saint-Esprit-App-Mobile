@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,12 +7,28 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { listenContentByType } from '../services/contentService';
 import { COLORS, SPACING, FONT_SIZES, FONT_WEIGHTS, BORDER_RADIUS, SHADOWS, MOCK_EVENTS } from '../constants/theme';
 import EventCard from '../components/EventCard';
 
 export default function EventsScreen({ navigation }) {
-  const [events] = useState(MOCK_EVENTS);
+  const [events, setEvents] = useState([]);
   const [filter, setFilter] = useState('all'); // 'all', 'upcoming', 'past'
+
+  useEffect(() => {
+    // Charger immédiatement les données MOCK
+    setEvents(MOCK_EVENTS);
+
+    // Puis écouter Firebase pour les événements réels
+    const unsubscribe = listenContentByType('event', (content) => {
+      console.log('Events received from Firebase:', content);
+      if (content.length > 0) {
+        setEvents(content);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const now = new Date();
   const upcomingEvents = events.filter(e => new Date(e.date) > now);
@@ -35,7 +51,7 @@ export default function EventsScreen({ navigation }) {
           <View>
             <Text style={styles.headerTitle}>Événements</Text>
             <Text style={styles.headerCount}>
-              {filteredEvents.length} événement{filteredEvents.length > 1 ? 's' : ''}
+              {`${filteredEvents.length}`} événement{filteredEvents.length > 1 ? 's' : ''}
             </Text>
           </View>
           <TouchableOpacity
@@ -83,7 +99,7 @@ export default function EventsScreen({ navigation }) {
                     filter === f.id && styles.filterBadgeTextActive,
                   ]}
                 >
-                  {f.count}
+                  {`${f.count}`}
                 </Text>
               </View>
             </TouchableOpacity>

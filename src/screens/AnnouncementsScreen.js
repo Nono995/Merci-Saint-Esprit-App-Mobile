@@ -130,7 +130,7 @@ export default function AnnouncementsScreen({ navigation }) {
               </View>
               <View style={styles.footerRight}>
                 <Ionicons name="eye" size={12} color={COLORS.textTertiary} />
-                <Text style={styles.footerText}>{announcement.views}</Text>
+                <Text style={styles.footerText}>{`${announcement.views || 0}`}</Text>
               </View>
               <Text style={styles.footerDate}>
                 {new Date(announcement.createdAt).toLocaleDateString('fr-FR', { month: 'short', day: 'numeric' })}
@@ -160,7 +160,7 @@ export default function AnnouncementsScreen({ navigation }) {
             <Text style={styles.headerSubtitle}>Restez informé de nos actualités</Text>
           </View>
           <View style={styles.notificationBadge}>
-            <Text style={styles.badgeCount}>{announcements.length}</Text>
+            <Text style={styles.badgeCount}>{`${announcements.length}`}</Text>
           </View>
         </View>
       </LinearGradient>

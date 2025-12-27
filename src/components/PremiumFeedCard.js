@@ -134,7 +134,7 @@ export default function PremiumFeedCard({
             {/* Duration badge */}
             <View style={styles.durationBadge}>
               <Ionicons name="time-outline" size={12} color={COLORS.white} />
-              <Text style={styles.durationText}>{post.duration}</Text>
+              <Text style={styles.durationText}>{`${post.duration || '0:00'}`}</Text>
             </View>
           </LinearGradient>
         </View>
@@ -165,15 +165,15 @@ export default function PremiumFeedCard({
             <View style={styles.statsContainer}>
               <View style={styles.stat}>
                 <Ionicons name="eye-outline" size={14} color={COLORS.gray500} />
-                <Text style={styles.statText}>{post.views}</Text>
+                <Text style={styles.statText}>{`${post.views || 0}`}</Text>
               </View>
               <View style={styles.stat}>
                 <Ionicons name="heart-outline" size={14} color={COLORS.gray500} />
-                <Text style={styles.statText}>{post.likes || '0'}</Text>
+                <Text style={styles.statText}>{`${post.likes || 0}`}</Text>
               </View>
               <View style={styles.stat}>
                 <Ionicons name="share-social-outline" size={14} color={COLORS.gray500} />
-                <Text style={styles.statText}>{post.shares || '0'}</Text>
+                <Text style={styles.statText}>{`${post.shares || 0}`}</Text>
               </View>
               <Text style={styles.dateText}>{post.date}</Text>
             </View>

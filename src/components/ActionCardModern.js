@@ -95,7 +95,7 @@ const ActionCardModern = ({
           </Text>
 
           {/* Subtitle */}
-          {subtitle && (
+          {!!subtitle && (
             <Text style={styles.subtitle} numberOfLines={1}>
               {subtitle}
             </Text>

@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "Merci Saint-Esprit",
+    "slug": "church-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": ["**/*"],
+    "android": {
+      "package": "com.mercisaintesprit.churchapp",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "backgroundColor": "#7C3AED"
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.READ_MEDIA_VIDEO"
+      ]
+    },
+    "plugins": [
+      "expo-camera",
+      "expo-av",
+      "expo-media-library"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "bbbdc9f1-aaea-4760-9b8e-9e2989de3864"
+      }
+    }
+  }
+}

@@ -87,7 +87,7 @@ const ModernCard = ({
           >
             {title}
           </Text>
-          {subtitle && (
+          {!!subtitle && (
             <Text
               style={[styles.subtitle, { fontSize: sizeConfig.subtitleSize }]}
               numberOfLines={2}

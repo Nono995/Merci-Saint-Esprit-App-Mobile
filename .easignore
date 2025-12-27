@@ -1,0 +1,28 @@
+# Documentation
+*.md
+*.txt
+
+# Admin folder (not needed for mobile app)
+admin/
+
+# Build artifacts
+.expo/
+.expo-shared/
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary
+.tmp/
+temp/

@@ -21,6 +21,7 @@ export async function publishContent(contentData) {
     let mediaUrl = null;
     let publicId = null;
     let duration = null;
+    let thumbnailUrl = null;
 
     if (contentData.file) {
       const resourceType = contentData.type === 'video' ? 'video' : 'auto';
@@ -28,6 +29,7 @@ export async function publishContent(contentData) {
       mediaUrl = uploaded.url;
       publicId = uploaded.publicId;
       duration = uploaded.duration;
+      thumbnailUrl = uploaded.thumbnailUrl;
     }
 
     const docRef = await addDoc(collection(db, 'content'), {
@@ -37,6 +39,7 @@ export async function publishContent(contentData) {
       mediaUrl: mediaUrl,
       publicId: publicId,
       duration: duration,
+      thumbnailUrl: thumbnailUrl,
       authorId: contentData.authorId,
       authorName: contentData.authorName,
       createdAt: Timestamp.now(),
@@ -47,7 +50,7 @@ export async function publishContent(contentData) {
       status: 'published',
     });
 
-    return { id: docRef.id, mediaUrl, publicId };
+    return { id: docRef.id, mediaUrl, publicId, thumbnailUrl };
   } catch (error) {
     console.error('Publish error:', error);
     throw error;
@@ -315,5 +318,120 @@ export function listenUserContent(userId, callback, limitCount = 50) {
   } catch (error) {
     console.error('Listen user content setup error:', error);
     return () => {};
+  }
+}
+
+// Prayer Services
+export function listenPrayers(callback, limitCount = 50) {
+  try {
+    const q = query(
+      collection(db, 'prayers'),
+      orderBy('createdAt', 'desc'),
+      limit(limitCount)
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const prayers = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        createdAt: doc.data().createdAt?.toDate(),
+      }));
+      callback(prayers);
+    }, (error) => {
+      console.error('Listen prayers error:', error);
+      callback([]);
+    });
+
+    return unsubscribe;
+  } catch (error) {
+    console.error('Listen prayers setup error:', error);
+    return () => {};
+  }
+}
+
+export async function addPrayer(prayerData) {
+  try {
+    const docRef = await addDoc(collection(db, 'prayers'), {
+      authorId: prayerData.authorId,
+      authorName: prayerData.authorName,
+      request: prayerData.request,
+      createdAt: Timestamp.now(),
+      prayers: [], // List of user IDs who prayed for this request
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error('Add prayer error:', error);
+    throw error;
+  }
+}
+
+export async function prayFor(prayerId, userId) {
+  try {
+    const docRef = doc(db, 'prayers', prayerId);
+    const snapshot = await getDoc(docRef);
+    if (snapshot.exists()) {
+      const data = snapshot.data();
+      const prayingUsers = data.prayers || [];
+      if (!prayingUsers.includes(userId)) {
+        await updateDoc(docRef, {
+          prayers: [...prayingUsers, userId]
+        });
+      }
+    }
+  } catch (error) {
+    console.error('Pray for error:', error);
+    throw error;
+  }
+}
+
+// Daily Messages Services
+export function listenDailyMessages(callback) {
+  try {
+    const q = query(
+      collection(db, 'daily_messages'),
+      orderBy('createdAt', 'desc')
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const messages = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        createdAt: doc.data().createdAt?.toDate(),
+      }));
+      callback(messages);
+    }, (error) => {
+      console.error('Listen daily messages error:', error);
+      callback([]);
+    });
+
+    return unsubscribe;
+  } catch (error) {
+    console.error('Listen daily messages setup error:', error);
+    return () => {};
+  }
+}
+
+export async function addDailyMessage(messageData) {
+  try {
+    const docRef = await addDoc(collection(db, 'daily_messages'), {
+      title: messageData.title,
+      message: messageData.message,
+      author: messageData.author || 'Saint Esprit',
+      category: messageData.category || 'Inspiration',
+      createdAt: Timestamp.now(),
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error('Add daily message error:', error);
+    throw error;
+  }
+}
+
+export async function deleteDailyMessage(messageId) {
+  try {
+    await deleteDoc(doc(db, 'daily_messages', messageId));
+  } catch (error) {
+    console.error('Delete daily message error:', error);
+    throw error;
   }
 }

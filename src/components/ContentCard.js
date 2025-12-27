@@ -61,14 +61,14 @@ const ContentCard = ({
           )}
 
           {/* Duration Badge */}
-          {duration && (
+          {!!duration && (
             <View style={styles.durationBadge}>
               <Text style={styles.durationText}>{duration}</Text>
             </View>
           )}
 
           {/* Category Badge */}
-          {category && (
+          {!!category && (
             <LinearGradient
               colors={gradient || [COLORS.primary, COLORS.secondary]}
               start={{ x: 0, y: 0 }}
@@ -86,7 +86,7 @@ const ContentCard = ({
             {title}
           </Text>
           
-          {description && (
+          {!!description && (
             <Text style={styles.description} numberOfLines={2}>
               {description}
             </Text>
@@ -94,7 +94,7 @@ const ContentCard = ({
 
           {/* Author & Stats */}
           <View style={styles.footer}>
-            {author && (
+            {!!author && (
               <View style={styles.authorContainer}>
                 <Ionicons name="person-circle-outline" size={16} color={COLORS.textSecondary} />
                 <Text style={styles.authorText} numberOfLines={1}>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { collection, addDoc, query, getDocs, orderBy } from 'firebase/firestore';
+import { collection, addDoc, query, getDocs, orderBy, Timestamp, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../config/firebase';
-import { Send, Bell, Clock, CheckCircle, Users } from 'lucide-react';
+import { Send, Bell, Clock, CheckCircle, Users, Trash2 } from 'lucide-react';
 
 export default function NotificationManager() {
   const [notifications, setNotifications] = useState([]);
@@ -35,15 +35,25 @@ export default function NotificationManager() {
     setLoading(true);
 
     try {
-      await addDoc(collection(db, 'notifications'), {
-        ...formData,
+      const notificationData = {
+        title: formData.title,
+        message: formData.message,
+        type: formData.type,
+        target: formData.target,
         sent: !formData.scheduled,
-        sentDate: formData.scheduled ? null : new Date(),
-        createdAt: new Date(),
+        sentDate: formData.scheduled ? null : Timestamp.now(),
+        createdAt: Timestamp.now(),
         openRate: 0,
-      });
+        read: false,
+      };
 
-      alert('Notification envoyée avec succès !');
+      if (formData.scheduled && formData.scheduledDate) {
+        notificationData.scheduledDate = Timestamp.fromDate(new Date(formData.scheduledDate));
+      }
+
+      await addDoc(collection(db, 'notifications'), notificationData);
+
+      alert('✅ Notification envoyée avec succès !');
       setFormData({
         title: '',
         message: '',
@@ -55,9 +65,42 @@ export default function NotificationManager() {
       loadNotifications();
     } catch (error) {
       console.error('Error sending notification:', error);
-      alert('Erreur lors de l\'envoi de la notification');
+      alert('❌ Erreur lors de l\'envoi de la notification');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (notificationId) => {
+    if (!window.confirm('Êtes-vous sûr de vouloir supprimer cette notification ?')) {
+      return;
+    }
+
+    try {
+      await deleteDoc(doc(db, 'notifications', notificationId));
+      setNotifications(notifications.filter(n => n.id !== notificationId));
+      alert('✅ Notification supprimée avec succès !');
+    } catch (error) {
+      console.error('Error deleting notification:', error);
+      alert('❌ Erreur lors de la suppression de la notification');
+    }
+  };
+
+  const handleDeleteAll = async () => {
+    if (!window.confirm('⚠️ Êtes-vous sûr de vouloir supprimer TOUTES les notifications ? Cette action est irréversible.')) {
+      return;
+    }
+
+    try {
+      const deletePromises = notifications.map(notif => 
+        deleteDoc(doc(db, 'notifications', notif.id))
+      );
+      await Promise.all(deletePromises);
+      setNotifications([]);
+      alert('✅ Toutes les notifications ont été supprimées !');
+    } catch (error) {
+      console.error('Error deleting all notifications:', error);
+      alert('❌ Erreur lors de la suppression des notifications');
     }
   };
 
@@ -175,11 +218,23 @@ export default function NotificationManager() {
 
       {/* Notification History */}
       <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-gray-100 rounded-lg">
-            <Clock size={20} className="text-gray-600" />
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-gray-100 rounded-lg">
+              <Clock size={20} className="text-gray-600" />
+            </div>
+            <h2 className="text-xl font-semibold text-gray-900">Historique des notifications</h2>
           </div>
-          <h2 className="text-xl font-semibold text-gray-900">Historique des notifications</h2>
+          
+          {notifications.length > 0 && (
+            <button
+              onClick={handleDeleteAll}
+              className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg font-medium hover:bg-red-100 transition-colors"
+            >
+              <Trash2 size={16} />
+              Tout supprimer
+            </button>
+          )}
         </div>
 
         <div className="space-y-3">
@@ -221,6 +276,14 @@ export default function NotificationManager() {
                       )}
                     </div>
                   </div>
+                  
+                  <button
+                    onClick={() => handleDelete(notif.id)}
+                    className="ml-4 p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    title="Supprimer cette notification"
+                  >
+                    <Trash2 size={18} />
+                  </button>
                 </div>
               </div>
             ))

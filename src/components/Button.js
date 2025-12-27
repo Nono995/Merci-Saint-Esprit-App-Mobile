@@ -89,7 +89,7 @@ export const Button = ({
 
   const renderButtonContent = () => (
     <View style={styles.buttonContent}>
-      {icon && (
+      {!!icon && (
         <Ionicons
           name={icon}
           size={20}

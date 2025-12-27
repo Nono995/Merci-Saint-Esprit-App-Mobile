@@ -11,29 +11,49 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { listenContentByType, likeContent } from '../services/contentService';
-import { getAuth } from 'firebase/auth';
 import { COLORS, SPACING, FONT_SIZES, FONT_WEIGHTS, BORDER_RADIUS, SHADOWS, MOCK_TESTIMONIES } from '../constants/theme';
 import TestimonyCard from '../components/TestimonyCard';
+import { auth } from '../services/firebaseConfig';
+import * as Device from 'expo-device';
 
 export default function TestimonyScreen() {
   const [testimonies, setTestimonies] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [newTestimony, setNewTestimony] = useState({ title: '', content: '', category: 'Général' });
   const [likedItems, setLikedItems] = useState({});
+  const [deviceId, setDeviceId] = useState(null);
   const categories = ['Général', 'Guérison', 'Provision', 'Paix', 'Salut', 'Famille'];
-  const auth = getAuth();
 
   useEffect(() => {
+    setupId();
+    
     const unsubscribe = listenContentByType('testimony', (content) => {
       if (content.length === 0) {
         setTestimonies(MOCK_TESTIMONIES);
       } else {
         setTestimonies(content);
+        updateLikedState(content);
       }
     });
 
     return () => unsubscribe();
   }, []);
+
+  const setupId = async () => {
+    const id = auth.currentUser?.uid || `guest_${Device.brand || 'dev'}_${Device.modelName || 'device'}`;
+    setDeviceId(id);
+  };
+
+  const updateLikedState = (content) => {
+    const id = auth.currentUser?.uid || `guest_${Device.brand || 'dev'}_${Device.modelName || 'device'}`;
+    const liked = {};
+    content.forEach(item => {
+      if (item.likes?.includes(id)) {
+        liked[item.id] = true;
+      }
+    });
+    setLikedItems(liked);
+  };
 
   const submitTestimony = () => {
     if (!newTestimony.title || !newTestimony.content) {
@@ -45,25 +65,22 @@ export default function TestimonyScreen() {
     setModalVisible(false);
   };
 
-  const handleLikeTestimony = async (id, likes = []) => {
-    const user = auth.currentUser;
-    if (!user) {
-      Alert.alert('Erreur', 'Vous devez être connecté');
-      return;
-    }
+  const handleLikeTestimony = async (id) => {
+    const idToUse = deviceId;
+    if (!idToUse) return;
 
     try {
-      await likeContent(id, user.uid);
+      // Toggle local state for immediate feedback
       setLikedItems(prev => ({
         ...prev,
         [id]: !prev[id]
       }));
+      
+      await likeContent(id, idToUse);
     } catch (error) {
       console.error('Like error:', error);
     }
   };
-
-
 
   return (
     <View style={styles.container}>
@@ -73,7 +90,7 @@ export default function TestimonyScreen() {
           <View>
             <Text style={styles.headerTitle}>Témoignages</Text>
             <Text style={styles.headerCount}>
-              {testimonies.length} témoignage{testimonies.length > 1 ? 's' : ''}
+              {`${testimonies.length}`} témoignage{testimonies.length > 1 ? 's' : ''}
             </Text>
           </View>
           <TouchableOpacity
@@ -103,7 +120,7 @@ export default function TestimonyScreen() {
                 key={testimony.id}
                 testimony={testimony}
                 isLiked={likedItems[testimony.id]}
-                onLike={() => handleLikeTestimony(testimony.id, testimony.likes)}
+                onLike={() => handleLikeTestimony(testimony.id)}
                 onShare={() => Alert.alert('Partager', 'Fonctionnalité à venir')}
               />
             ))}

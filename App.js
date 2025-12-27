@@ -4,7 +4,11 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
+import { View, Text, StyleSheet } from 'react-native';
 import { COLORS } from './src/constants/theme';
+import { AuthProvider } from './src/contexts/AuthContext';
+import { AdminAuthProvider } from './src/contexts/AdminAuthContext';
+import { NotificationProvider, useNotifications } from './src/contexts/NotificationContext';
 
 import HomeScreen from './src/screens/HomeScreen';
 import TestimonyScreen from './src/screens/TestimonyScreen';
@@ -17,6 +21,7 @@ import VideosScreen from './src/screens/VideosScreen';
 import LiveScreen from './src/screens/LiveScreen';
 import AuthScreen from './src/screens/AuthScreen';
 import OnboardingScreen from './src/screens/OnboardingScreen';
+import IntroSlidersScreen from './src/screens/IntroSlidersScreen';
 import NotificationsScreen from './src/screens/NotificationsScreen';
 import MessagesScreen from './src/screens/MessagesScreen';
 import ChatScreen from './src/screens/ChatScreen';
@@ -36,6 +41,8 @@ const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 function MainTabs() {
+  const { unreadCount = 0 } = useNotifications();
+  
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -43,10 +50,16 @@ function MainTabs() {
           const icons = {
             'Accueil': focused ? 'home' : 'home-outline',
             'Vidéos': focused ? 'play-circle' : 'play-circle-outline',
+            'Bible': focused ? 'book' : 'book-outline',
             'Témoignages': focused ? 'heart' : 'heart-outline',
             'Profil': focused ? 'person' : 'person-outline'
           };
-          return <Ionicons name={icons[route.name]} size={size} color={color} />;
+          
+          return (
+            <View style={{ position: 'relative' }}>
+              <Ionicons name={icons[route.name]} size={size} color={color} />
+            </View>
+          );
         },
         tabBarActiveTintColor: COLORS.primary,
         tabBarInactiveTintColor: COLORS.textTertiary,
@@ -72,41 +85,59 @@ function MainTabs() {
     >
       <Tab.Screen name="Accueil" component={HomeScreen} />
       <Tab.Screen name="Vidéos" component={VideosScreen} />
+      <Tab.Screen name="Bible" component={BibleScreen} />
       <Tab.Screen name="Témoignages" component={TestimonyScreen} />
       <Tab.Screen name="Profil" component={ProfileScreen} />
     </Tab.Navigator>
   );
 }
 
+function RootNavigator() {
+  // L'écran IntroSliders s'affiche en premier au lancement
+  return (
+    <Stack.Navigator 
+      screenOptions={{ headerShown: false }}
+      initialRouteName="IntroSliders"
+    >
+      <Stack.Screen name="IntroSliders" component={IntroSlidersScreen} />
+      <Stack.Screen name="MainTabs" component={MainTabs} />
+      <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+      <Stack.Screen name="Auth" component={AuthScreen} />
+      <Stack.Screen name="VideoPlayer" component={VideoPlayerScreen} />
+      <Stack.Screen name="AddContent" component={AddContentScreen} />
+      <Stack.Screen name="Podcast" component={PodcastScreen} />
+      <Stack.Screen name="Videos" component={VideosScreen} />
+      <Stack.Screen name="Live" component={LiveScreen} />
+      <Stack.Screen name="Notifications" component={NotificationsScreen} />
+      <Stack.Screen name="Messages" component={MessagesScreen} />
+      <Stack.Screen name="Chat" component={ChatScreen} />
+      <Stack.Screen name="Bible" component={BibleScreen} />
+      <Stack.Screen name="BibleChapters" component={BibleChaptersScreen} />
+      <Stack.Screen name="BibleReader" component={BibleReaderScreen} />
+      <Stack.Screen name="BibleBookmarks" component={BibleBookmarksScreen} />
+      <Stack.Screen name="Events" component={EventsScreen} />
+      <Stack.Screen name="Announcements" component={AnnouncementsScreen} />
+      <Stack.Screen name="PrayerRequests" component={PrayerRequestsScreen} />
+      <Stack.Screen name="Search" component={SearchScreen} />
+      <Stack.Screen name="Settings" component={SettingsScreen} />
+      <Stack.Screen name="PrayerGroups" component={PrayerGroupsScreen} />
+      <Stack.Screen name="OfflineContent" component={OfflineContentScreen} />
+      <Stack.Screen name="Dons" component={DonationScreen} />
+    </Stack.Navigator>
+  );
+}
+
 export default function App() {
   return (
-    <NavigationContainer>
-      <StatusBar style="dark" />
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Onboarding" component={OnboardingScreen} />
-        <Stack.Screen name="Auth" component={AuthScreen} />
-        <Stack.Screen name="MainTabs" component={MainTabs} />
-        <Stack.Screen name="VideoPlayer" component={VideoPlayerScreen} />
-        <Stack.Screen name="AddContent" component={AddContentScreen} />
-        <Stack.Screen name="Podcast" component={PodcastScreen} />
-        <Stack.Screen name="Videos" component={VideosScreen} />
-        <Stack.Screen name="Live" component={LiveScreen} />
-        <Stack.Screen name="Notifications" component={NotificationsScreen} />
-        <Stack.Screen name="Messages" component={MessagesScreen} />
-        <Stack.Screen name="Chat" component={ChatScreen} />
-        <Stack.Screen name="Bible" component={BibleScreen} />
-        <Stack.Screen name="BibleChapters" component={BibleChaptersScreen} />
-        <Stack.Screen name="BibleReader" component={BibleReaderScreen} />
-        <Stack.Screen name="BibleBookmarks" component={BibleBookmarksScreen} />
-        <Stack.Screen name="Events" component={EventsScreen} />
-        <Stack.Screen name="Announcements" component={AnnouncementsScreen} />
-        <Stack.Screen name="PrayerRequests" component={PrayerRequestsScreen} />
-        <Stack.Screen name="Search" component={SearchScreen} />
-        <Stack.Screen name="Settings" component={SettingsScreen} />
-        <Stack.Screen name="PrayerGroups" component={PrayerGroupsScreen} />
-        <Stack.Screen name="OfflineContent" component={OfflineContentScreen} />
-        <Stack.Screen name="Dons" component={DonationScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <AuthProvider>
+      <AdminAuthProvider>
+        <NotificationProvider>
+          <NavigationContainer>
+            <StatusBar style="dark" />
+            <RootNavigator />
+          </NavigationContainer>
+        </NotificationProvider>
+      </AdminAuthProvider>
+    </AuthProvider>
   );
 }

@@ -78,7 +78,7 @@ const Header = ({
           {/* Titre et sous-titre */}
           <View style={[styles.titleContainer, { flex: showBack ? 1 : undefined }]}>
             <Text style={[styles.title, { color: resolvedTextColor }]}>{title}</Text>
-            {subtitle && (
+            {!!subtitle && (
               <Text style={[styles.subtitle, { color: resolvedTextColor }]}>{subtitle}</Text>
             )}
           </View>
@@ -172,7 +172,7 @@ const HeaderWithIcon = ({
               </View>
               <View style={styles.titleTextContainer}>
                 <Text style={[styles.title, { color: resolvedTextColor }]}>{title}</Text>
-                {subtitle && (
+                {!!subtitle && (
                   <Text style={[styles.subtitle, { color: resolvedTextColor }]}>{subtitle}</Text>
                 )}
               </View>

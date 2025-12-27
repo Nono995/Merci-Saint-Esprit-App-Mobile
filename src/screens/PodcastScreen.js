@@ -6,16 +6,25 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
+  Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { listenContentByType } from '../services/contentService';
 import { COLORS, SPACING, FONT_SIZES, FONT_WEIGHTS, BORDER_RADIUS, SHADOWS, MOCK_PODCASTS } from '../constants/theme';
 import PodcastCard from '../components/PodcastCard';
+import PodcastCardV2 from '../components/PodcastCardV2';
+import PodcastCardV3 from '../components/PodcastCardV3';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const CARD_PADDING = 16; // padding du container
+const CARD_GAP = 12; // gap entre les cartes
+const CARD_WIDTH = (SCREEN_WIDTH - (CARD_PADDING * 2) - CARD_GAP) / 2;
 
 export default function PodcastScreen({ navigation }) {
   const [podcasts, setPodcasts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [viewMode, setViewMode] = useState('grid'); // 'grid', 'list', 'compact', 'featured'
+  const [viewMode, setViewMode] = useState('list'); // Mode liste par défaut pour uniformité
+  const useV3 = true; // Utiliser le nouveau composant V3 ultra-moderne
 
   useEffect(() => {
     const unsubscribe = listenContentByType('audio', (content) => {
@@ -40,6 +49,11 @@ export default function PodcastScreen({ navigation }) {
     { id: 'featured', icon: 'star-outline', label: 'Vedette' },
   ];
 
+  const renderPodcastCard = (podcast, index, isCompact = false) => {
+    const CardComponent = useV3 ? PodcastCardV3 : PodcastCardV2;
+    return <CardComponent podcast={podcast} index={index} compact={isCompact} />;
+  };
+
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -48,7 +62,7 @@ export default function PodcastScreen({ navigation }) {
           <View>
             <Text style={styles.headerTitle}>Podcasts</Text>
             <Text style={styles.headerCount}>
-              {filteredPodcasts.length} épisode{filteredPodcasts.length > 1 ? 's' : ''}
+              {`${filteredPodcasts.length}`} épisode{filteredPodcasts.length > 1 ? 's' : ''}
             </Text>
           </View>
           <TouchableOpacity
@@ -123,7 +137,7 @@ export default function PodcastScreen({ navigation }) {
               <View style={styles.gridView}>
                 {filteredPodcasts.map((podcast, index) => (
                   <View key={podcast.id} style={styles.gridItem}>
-                    <PodcastCard podcast={podcast} index={index} />
+                    {renderPodcastCard(podcast, index, false)}
                   </View>
                 ))}
               </View>
@@ -132,7 +146,9 @@ export default function PodcastScreen({ navigation }) {
             {viewMode === 'list' && (
               <View style={styles.listView}>
                 {filteredPodcasts.map((podcast, index) => (
-                  <PodcastCard key={podcast.id} podcast={podcast} index={index} />
+                  <View key={podcast.id}>
+                    {renderPodcastCard(podcast, index, false)}
+                  </View>
                 ))}
               </View>
             )}
@@ -141,7 +157,7 @@ export default function PodcastScreen({ navigation }) {
               <View style={styles.compactView}>
                 {filteredPodcasts.map((podcast, index) => (
                   <View key={podcast.id} style={styles.compactItem}>
-                    <PodcastCard podcast={podcast} index={index} />
+                    {renderPodcastCard(podcast, index, true)}
                   </View>
                 ))}
               </View>
@@ -150,7 +166,9 @@ export default function PodcastScreen({ navigation }) {
             {viewMode === 'featured' && (
               <View style={styles.featuredView}>
                 {filteredPodcasts.map((podcast, index) => (
-                  <PodcastCard key={podcast.id} podcast={podcast} index={index} />
+                  <View key={podcast.id}>
+                    {renderPodcastCard(podcast, index, false)}
+                  </View>
                 ))}
               </View>
             )}
@@ -259,33 +277,35 @@ const styles = StyleSheet.create({
     paddingBottom: SPACING.xxxl,
   },
   podcastsContainer: {
-    padding: SPACING.base,
+    padding: CARD_PADDING,
   },
   // Grid View (2 colonnes)
   gridView: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: SPACING.base,
+    justifyContent: 'space-between',
   },
   gridItem: {
-    width: '48%',
+    width: CARD_WIDTH,
+    marginBottom: 12,
   },
   // List View (1 colonne, pleine largeur)
   listView: {
-    gap: SPACING.base,
+    gap: 16,
   },
   // Compact View (2 colonnes, plus petit)
   compactView: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: SPACING.sm,
+    justifyContent: 'space-between',
   },
   compactItem: {
-    width: '48.5%',
+    width: CARD_WIDTH,
+    marginBottom: 10,
   },
   // Featured View (1 colonne, grande taille)
   featuredView: {
-    gap: SPACING.lg,
+    gap: 20,
   },
   emptyState: {
     alignItems: 'center',

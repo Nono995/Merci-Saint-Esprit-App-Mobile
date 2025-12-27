@@ -77,7 +77,7 @@ const TestimonyCard = ({ testimony, onLike, onShare, isLiked }) => {
             color={isLiked ? COLORS.tertiary : COLORS.textTertiary}
           />
           <Text style={[styles.actionText, isLiked && styles.actionTextActive]}>
-            {testimony.likes?.length || 0}
+            {`${testimony.likes?.length || 0}`}
           </Text>
         </TouchableOpacity>
 
@@ -87,12 +87,12 @@ const TestimonyCard = ({ testimony, onLike, onShare, isLiked }) => {
           activeOpacity={0.7}
         >
           <Ionicons name="share-social-outline" size={18} color={COLORS.textTertiary} />
-          <Text style={styles.actionText}>{testimony.shares || 0}</Text>
+          <Text style={styles.actionText}>{`${testimony.shares || 0}`}</Text>
         </TouchableOpacity>
 
         <View style={styles.viewsContainer}>
           <Ionicons name="eye-outline" size={14} color={COLORS.textTertiary} />
-          <Text style={styles.viewsText}>{testimony.views || 0}</Text>
+          <Text style={styles.viewsText}>{`${testimony.views || 0}`}</Text>
         </View>
       </View>
     </Animated.View>

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Animated, Dimensions, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { COLORS } from '../constants/theme';
 
 const { width, height } = Dimensions.get('window');
@@ -8,32 +9,31 @@ const { width, height } = Dimensions.get('window');
 const slides = [
   {
     id: '1',
-    type: 'logo',
-    website: 'www.merci-saint-esprit.com',
-  },
-  {
-    id: '2',
     type: 'welcome',
-    title: 'Merci Saint-Esprit',
+    title: 'Bienvenue',
+    subtitle: 'Merci Saint-Esprit',
     description: 'Votre communauté spirituelle connectée',
   },
   {
-    id: '3',
-    icon: 'videocam',
+    id: '2',
+    icon: 'play-circle-outline',
     title: 'Contenus Spirituels',
-    description: 'Accédez à des vidéos, podcasts et enseignements inspirants pour nourrir votre foi au quotidien',
+    description: 'Vidéos, podcasts et enseignements pour nourrir votre foi',
+    color: '#6366F1',
+  },
+  {
+    id: '3',
+    icon: 'people-outline',
+    title: 'Communauté',
+    description: 'Événements, prières et partages avec votre église',
+    color: '#EC4899',
   },
   {
     id: '4',
-    icon: 'calendar',
-    title: 'Événements & Prières',
-    description: 'Participez aux événements de la communauté et partagez vos intentions de prière',
-  },
-  {
-    id: '5',
-    icon: 'heart',
+    icon: 'heart-outline',
     title: 'Témoignages',
-    description: 'Découvrez et partagez des témoignages authentiques qui inspirent et fortifient la foi',
+    description: 'Histoires authentiques qui inspirent et fortifient',
+    color: '#06B6D4',
   },
 ];
 
@@ -41,27 +41,21 @@ export default function OnboardingScreen({ navigation }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollX = useRef(new Animated.Value(0)).current;
   const slidesRef = useRef(null);
-  const logoScale = useRef(new Animated.Value(0.5)).current;
-  const logoRotate = useRef(new Animated.Value(0)).current;
-  const logoOpacity = useRef(new Animated.Value(0)).current;
+  
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(30)).current;
 
   useEffect(() => {
-    // Logo animation
     Animated.parallel([
-      Animated.spring(logoScale, {
+      Animated.timing(fadeAnim, {
         toValue: 1,
-        tension: 20,
-        friction: 7,
+        duration: 600,
         useNativeDriver: true,
       }),
-      Animated.timing(logoOpacity, {
-        toValue: 1,
-        duration: 800,
-        useNativeDriver: true,
-      }),
-      Animated.timing(logoRotate, {
-        toValue: 1,
-        duration: 1000,
+      Animated.spring(slideAnim, {
+        toValue: 0,
+        tension: 50,
+        friction: 8,
         useNativeDriver: true,
       }),
     ]).start();
@@ -87,66 +81,54 @@ export default function OnboardingScreen({ navigation }) {
 
   const Slide = ({ item, index }) => {
     const inputRange = [(index - 1) * width, index * width, (index + 1) * width];
-    const scale = scrollX.interpolate({
-      inputRange,
-      outputRange: [0.9, 1, 0.9],
-      extrapolate: 'clamp'
-    });
+    
     const opacity = scrollX.interpolate({
       inputRange,
-      outputRange: [0.5, 1, 0.5],
+      outputRange: [0.4, 1, 0.4],
       extrapolate: 'clamp'
     });
 
-    const spin = logoRotate.interpolate({
-      inputRange: [0, 1],
-      outputRange: ['0deg', '360deg'],
+    const translateY = scrollX.interpolate({
+      inputRange,
+      outputRange: [20, 0, -20],
+      extrapolate: 'clamp'
     });
-
-    if (item.type === 'logo') {
-      return (
-        <View style={styles.slide}>
-          <View style={styles.logoSlideBlue}>
-            {/* Decorative circles with white overlay */}
-            <View style={styles.decorativeCircleWhite1} />
-            <View style={styles.decorativeCircleWhite2} />
-            <View style={styles.decorativeCircleWhite3} />
-
-            <Animated.View
-              style={[
-                styles.logoContainer,
-                {
-                  opacity: logoOpacity,
-                  transform: [{ scale: logoScale }, { rotate: spin }],
-                },
-              ]}
-            >
-              <Image source={require('../../assets/logo.png')} style={styles.logoImage} resizeMode="contain" />
-            </Animated.View>
-
-            <Animated.View style={[styles.websiteContainer, { opacity: logoOpacity }]}>
-              <Text style={styles.websiteText}>{item.website}</Text>
-            </Animated.View>
-          </View>
-        </View>
-      );
-    }
 
     if (item.type === 'welcome') {
       return (
         <View style={styles.slide}>
-          <Animated.View style={[styles.welcomeSlide, { opacity, transform: [{ scale }] }]}>
-            {/* Decorative patterns */}
-            <View style={styles.contentDecorativeCircle1} />
-            <View style={styles.contentDecorativeCircle2} />
-
-            <View style={styles.welcomeContent}>
-              <View style={styles.titleContainer}>
-                <Text style={styles.welcomeTitle}>Merci Saint-Esprit</Text>
-                <Text style={styles.churchText}>église</Text>
+          <Animated.View 
+            style={[
+              styles.welcomeContainer,
+              {
+                opacity: fadeAnim,
+                transform: [{ translateY: slideAnim }]
+              }
+            ]}
+          >
+            {/* Logo avec cercle subtil */}
+            <View style={styles.logoSection}>
+              <View style={styles.logoCircle}>
+                <Image 
+                  source={require('../../assets/logo.png')} 
+                  style={styles.logo} 
+                  resizeMode="contain" 
+                />
               </View>
-              <View style={styles.titleUnderline} />
+            </View>
+
+            {/* Texte */}
+            <View style={styles.welcomeTextSection}>
+              <Text style={styles.welcomeLabel}>{item.title}</Text>
+              <Text style={styles.welcomeTitle}>{item.subtitle}</Text>
+              <View style={styles.dividerLine} />
               <Text style={styles.welcomeDescription}>{item.description}</Text>
+            </View>
+
+            {/* Indicateur subtil */}
+            <View style={styles.scrollIndicator}>
+              <Ionicons name="chevron-down" size={20} color={COLORS.textSecondary} />
+              <Text style={styles.scrollText}>Glissez pour découvrir</Text>
             </View>
           </Animated.View>
         </View>
@@ -155,26 +137,32 @@ export default function OnboardingScreen({ navigation }) {
 
     return (
       <View style={styles.slide}>
-        <Animated.View style={[styles.contentSlide, { opacity, transform: [{ scale }] }]}>
-          {/* Decorative patterns for content slides */}
-          <View style={styles.contentDecorativeCircle1} />
-          <View style={styles.contentDecorativeCircle2} />
-          
-          {/* Icon with background */}
-          <View style={styles.iconContainer}>
-            <View style={styles.iconBgCircle}>
-              <Ionicons name={item.icon} size={100} color={`${COLORS.primary}30`} />
-            </View>
-            <View style={[styles.iconCircle, { backgroundColor: `${COLORS.primary}20` }]}>
-              <Ionicons name={item.icon} size={48} color={COLORS.primary} />
+        <Animated.View 
+          style={[
+            styles.contentContainer,
+            {
+              opacity,
+              transform: [{ translateY }]
+            }
+          ]}
+        >
+          {/* Icône avec accent coloré */}
+          <View style={styles.iconSection}>
+            <View style={[styles.iconCircle, { backgroundColor: `${item.color}10` }]}>
+              <View style={[styles.iconInner, { backgroundColor: `${item.color}15` }]}>
+                <Ionicons name={item.icon} size={56} color={item.color} />
+              </View>
             </View>
           </View>
 
-          {/* Text Content */}
-          <View style={styles.textContainer}>
+          {/* Contenu texte */}
+          <View style={styles.textSection}>
             <Text style={styles.slideTitle}>{item.title}</Text>
             <Text style={styles.slideDescription}>{item.description}</Text>
           </View>
+
+          {/* Accent décoratif */}
+          <View style={[styles.accentBar, { backgroundColor: item.color }]} />
         </Animated.View>
       </View>
     );
@@ -185,20 +173,23 @@ export default function OnboardingScreen({ navigation }) {
       <View style={styles.paginatorContainer}>
         {slides.map((_, i) => {
           const inputRange = [(i - 1) * width, i * width, (i + 1) * width];
+          
           const dotWidth = scrollX.interpolate({
             inputRange,
-            outputRange: [10, 30, 10],
+            outputRange: [8, 24, 8],
             extrapolate: 'clamp'
           });
+          
           const opacity = scrollX.interpolate({
             inputRange,
             outputRange: [0.3, 1, 0.3],
             extrapolate: 'clamp'
           });
+
           return (
             <Animated.View
               style={[
-                styles.paginatorDot, 
+                styles.dot, 
                 { 
                   width: dotWidth, 
                   opacity,
@@ -215,23 +206,17 @@ export default function OnboardingScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      {/* Skip Button */}
-      {currentIndex > 0 && (
+      {/* Header avec bouton Passer */}
+      <View style={styles.header}>
         <TouchableOpacity 
           onPress={skip} 
-          style={[
-            styles.skipBtn,
-            { backgroundColor: currentIndex === 0 ? 'rgba(255, 255, 255, 0.25)' : '#F3F4F6' }
-          ]}
+          style={styles.skipButton}
+          activeOpacity={0.7}
         >
-          <Text style={[
-            styles.skipText,
-            { color: currentIndex === 0 ? '#FFFFFF' : COLORS.text }
-          ]}>
-            Passer
-          </Text>
+          <Text style={styles.skipText}>Passer</Text>
+          <Ionicons name="arrow-forward" size={16} color={COLORS.textSecondary} />
         </TouchableOpacity>
-      )}
+      </View>
 
       {/* Slides */}
       <FlatList
@@ -242,8 +227,11 @@ export default function OnboardingScreen({ navigation }) {
         pagingEnabled
         bounces={false}
         keyExtractor={(item) => item.id}
-        onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }], { useNativeDriver: false })}
-        scrollEventThrottle={32}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { x: scrollX } } }], 
+          { useNativeDriver: false }
+        )}
+        scrollEventThrottle={16}
         onViewableItemsChanged={viewableItemsChanged}
         viewabilityConfig={viewConfig}
         ref={slidesRef}
@@ -255,21 +243,24 @@ export default function OnboardingScreen({ navigation }) {
 
         <TouchableOpacity 
           onPress={scrollTo} 
-          style={[
-            styles.nextBtn,
-            { backgroundColor: COLORS.primary }
-          ]}
+          style={styles.nextButton}
+          activeOpacity={0.9}
         >
-          <View style={styles.nextBtnInner}>
-            {currentIndex === slides.length - 1 ? (
-              <Ionicons name="arrow-forward-circle" size={28} color="#FFFFFF" />
-            ) : (
-              <>
-                <Text style={styles.nextBtnText}>Suivant</Text>
-                <Ionicons name="arrow-forward" size={20} color="#FFFFFF" />
-              </>
-            )}
-          </View>
+          <LinearGradient
+            colors={[COLORS.primary, '#4F46E5']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.nextButtonGradient}
+          >
+            <Text style={styles.nextButtonText}>
+              {currentIndex === slides.length - 1 ? 'Commencer' : 'Suivant'}
+            </Text>
+            <Ionicons 
+              name={currentIndex === slides.length - 1 ? "checkmark-circle" : "arrow-forward"} 
+              size={22} 
+              color="#FFFFFF" 
+            />
+          </LinearGradient>
         </TouchableOpacity>
       </View>
     </View>
@@ -281,231 +272,209 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
-  skipBtn: {
+  
+  // Header
+  header: {
     position: 'absolute',
-    top: 60,
-    right: 20,
+    top: 0,
+    left: 0,
+    right: 0,
+    paddingTop: 50,
+    paddingHorizontal: 24,
+    paddingBottom: 16,
     zIndex: 10,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    backgroundColor: 'transparent',
+  },
+  skipButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-end',
+    gap: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    backgroundColor: '#F9FAFB',
     borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
   },
   skipText: {
     fontSize: 14,
     fontWeight: '600',
+    color: COLORS.textSecondary,
   },
+
+  // Slide
   slide: {
     width,
     height,
+    paddingTop: 100,
   },
-  // Logo Slide (Blue Background)
-  logoSlideBlue: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: COLORS.primary,
-    position: 'relative',
-  },
-  decorativeCircleWhite1: {
-    position: 'absolute',
-    width: 300,
-    height: 300,
-    borderRadius: 150,
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
-    top: -100,
-    right: -100,
-  },
-  decorativeCircleWhite2: {
-    position: 'absolute',
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    bottom: 100,
-    left: -50,
-  },
-  decorativeCircleWhite3: {
-    position: 'absolute',
-    width: 180,
-    height: 180,
-    borderRadius: 90,
-    backgroundColor: 'rgba(255, 255, 255, 0.12)',
-    top: '30%',
-    left: '15%',
-  },
-  logoContainer: {
-    width: 220,
-    height: 220,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 30,
-  },
-  logoImage: {
-    width: '100%',
-    height: '100%',
-  },
-  websiteContainer: {
-    alignItems: 'center',
-    paddingHorizontal: 40,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 25,
-  },
-  websiteText: {
-    fontSize: 16,
-    color: '#FFFFFF',
-    textAlign: 'center',
-    fontWeight: '600',
-    letterSpacing: 0.5,
-  },
+
   // Welcome Slide
-  welcomeSlide: {
+  welcomeContainer: {
     flex: 1,
+    paddingHorizontal: 32,
+    justifyContent: 'center',
+  },
+  logoSection: {
+    alignItems: 'center',
+    marginBottom: 48,
+  },
+  logoCircle: {
+    width: 160,
+    height: 160,
+    borderRadius: 80,
+    backgroundColor: '#F9FAFB',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 40,
-    position: 'relative',
-    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
+    elevation: 3,
   },
-  welcomeContent: {
-    alignItems: 'center',
-    zIndex: 1,
+  logo: {
+    width: 120,
+    height: 120,
   },
-  titleContainer: {
+  welcomeTextSection: {
     alignItems: 'center',
-    marginBottom: 16,
-    position: 'relative',
+  },
+  welcomeLabel: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: COLORS.textSecondary,
+    marginBottom: 8,
+    letterSpacing: 1,
+    textTransform: 'uppercase',
   },
   welcomeTitle: {
-    fontSize: 36,
+    fontSize: 40,
     fontWeight: '800',
     color: COLORS.text,
     textAlign: 'center',
+    marginBottom: 16,
     letterSpacing: -0.5,
   },
-  churchText: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#EC4899',
-    marginTop: 4,
-    alignSelf: 'flex-end',
-    marginRight: 20,
-  },
-  titleUnderline: {
-    width: 80,
-    height: 4,
+  dividerLine: {
+    width: 60,
+    height: 3,
     backgroundColor: COLORS.primary,
     borderRadius: 2,
-    marginBottom: 24,
+    marginBottom: 16,
   },
   welcomeDescription: {
-    fontSize: 18,
+    fontSize: 17,
+    fontWeight: '400',
     color: COLORS.textSecondary,
     textAlign: 'center',
-    lineHeight: 28,
+    lineHeight: 26,
+  },
+  scrollIndicator: {
+    alignItems: 'center',
+    marginTop: 48,
+    gap: 8,
+  },
+  scrollText: {
+    fontSize: 13,
     fontWeight: '500',
+    color: COLORS.textSecondary,
   },
+
   // Content Slides
-  contentSlide: {
+  contentContainer: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
     paddingHorizontal: 40,
-    paddingTop: 80,
-    position: 'relative',
-  },
-  contentDecorativeCircle1: {
-    position: 'absolute',
-    width: 250,
-    height: 250,
-    borderRadius: 125,
-    backgroundColor: `${COLORS.primary}18`,
-    top: -80,
-    right: -80,
-  },
-  contentDecorativeCircle2: {
-    position: 'absolute',
-    width: 180,
-    height: 180,
-    borderRadius: 90,
-    backgroundColor: `${COLORS.secondary}18`,
-    bottom: 50,
-    left: -60,
-  },
-  iconContainer: {
-    alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 60,
-    position: 'relative',
-  },
-  iconBgCircle: {
-    position: 'absolute',
-    width: 200,
-    height: 200,
     alignItems: 'center',
-    justifyContent: 'center',
+  },
+  iconSection: {
+    marginBottom: 40,
   },
   iconCircle: {
+    width: 160,
+    height: 160,
+    borderRadius: 80,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  iconInner: {
     width: 120,
     height: 120,
     borderRadius: 60,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: '#F3F4F6',
   },
-  textContainer: {
+  textSection: {
     alignItems: 'center',
+    maxWidth: 320,
   },
   slideTitle: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: '700',
     color: COLORS.text,
     textAlign: 'center',
     marginBottom: 16,
+    letterSpacing: -0.5,
   },
   slideDescription: {
     fontSize: 16,
+    fontWeight: '400',
     color: COLORS.textSecondary,
     textAlign: 'center',
     lineHeight: 24,
-    fontWeight: '400',
   },
+  accentBar: {
+    width: 40,
+    height: 4,
+    borderRadius: 2,
+    marginTop: 32,
+  },
+
   // Footer
   footer: {
     position: 'absolute',
     bottom: 50,
-    width: '100%',
-    paddingHorizontal: 40,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 32,
     alignItems: 'center',
   },
   paginatorContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 30,
-    gap: 8,
+    gap: 6,
+    marginBottom: 32,
   },
-  paginatorDot: {
+  dot: {
     height: 8,
     borderRadius: 4,
   },
-  nextBtn: {
-    borderRadius: 30,
-    paddingHorizontal: 40,
-    paddingVertical: 16,
-    minWidth: 200,
+  nextButton: {
+    width: '100%',
+    maxWidth: 280,
+    borderRadius: 28,
+    overflow: 'hidden',
+    shadowColor: COLORS.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
   },
-  nextBtnInner: {
+  nextButtonGradient: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
   },
-  nextBtnText: {
-    fontSize: 16,
+  nextButtonText: {
+    fontSize: 17,
     fontWeight: '700',
     color: '#FFFFFF',
+    letterSpacing: 0.3,
   },
 });

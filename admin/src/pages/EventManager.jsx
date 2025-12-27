@@ -20,8 +20,11 @@ export default function EventManager() {
 
   const loadEvents = async () => {
     try {
-      const snapshot = await getDocs(collection(db, 'events'));
-      setEvents(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      const snapshot = await getDocs(collection(db, 'content'));
+      const eventData = snapshot.docs
+        .map(doc => ({ id: doc.id, ...doc.data() }))
+        .filter(item => item.type === 'event');
+      setEvents(eventData);
     } catch (error) {
       console.error('Error loading events:', error);
     } finally {
@@ -32,16 +35,26 @@ export default function EventManager() {
   const handleAddEvent = async (e) => {
     e.preventDefault();
     try {
-      await addDoc(collection(db, 'events'), {
-        ...formData,
+      await addDoc(collection(db, 'content'), {
+        title: formData.title,
+        description: formData.description,
+        type: 'event',
+        date: formData.date,
+        location: formData.location,
         createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
         attendees: 0,
+        status: 'published',
+        views: 0,
+        likes: [],
+        shares: 0,
       });
       setFormData({ title: '', description: '', date: '', location: '' });
       setShowForm(false);
       loadEvents();
     } catch (error) {
       console.error('Error adding event:', error);
+      alert('Erreur lors de la création de l\'événement');
     }
   };
 
@@ -49,7 +62,7 @@ export default function EventManager() {
     if (!window.confirm('Supprimer cet événement ?')) return;
     
     try {
-      await deleteDoc(doc(db, 'events', id));
+      await deleteDoc(doc(db, 'content', id));
       setEvents(events.filter(e => e.id !== id));
     } catch (error) {
       console.error('Error deleting event:', error);

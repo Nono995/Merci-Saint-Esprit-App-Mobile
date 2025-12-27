@@ -1,8 +1,40 @@
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../constants/theme';
+import { useAuth } from '../contexts/AuthContext';
+import { signOut } from 'firebase/auth';
+import { listenUserContent } from '../services/contentService';
+import React, { useEffect, useState } from 'react';
 
 export default function ProfileScreen({ navigation }) {
+  const { user, auth } = useAuth();
+  const [stats, setStats] = useState({ videos: 0, testimonies: 0 });
+
+  useEffect(() => {
+    if (user) {
+      const unsubscribe = listenUserContent(user.uid, (content) => {
+        const testimonyCount = content.filter(c => c.type === 'testimony').length;
+        const videoCount = content.filter(c => c.type === 'video').length;
+        setStats({
+          videos: videoCount,
+          testimonies: testimonyCount
+        });
+      });
+      return () => unsubscribe();
+    } else {
+      setStats({ videos: 0, testimonies: 0 });
+    }
+  }, [user]);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigation.reset({ index: 0, routes: [{ name: 'Auth' }] });
+    } catch (error) {
+      Alert.alert('Erreur', 'Impossible de se déconnecter.');
+    }
+  };
+
   const quickActions = [
     { id: 'events', title: 'Événements', icon: 'calendar', color: COLORS.tertiary, screen: 'Events' },
     { id: 'prayers', title: 'Prières', icon: 'hand-left', color: COLORS.secondary, screen: 'PrayerRequests' },
@@ -13,22 +45,15 @@ export default function ProfileScreen({ navigation }) {
       title: 'Contenu',
       items: [
         { id: 'podcasts', title: 'Mes Podcasts', icon: 'headset-outline', screen: 'Podcast' },
-        { id: 'favorites', title: 'Favoris', icon: 'heart-outline', screen: null },
+        { id: 'favorites', title: 'Favoris', icon: 'heart-outline', screen: null }, // Pas encore de screen dédié
         { id: 'offline', title: 'Hors ligne', icon: 'cloud-download-outline', screen: 'OfflineContent' },
-      ],
-    },
-    {
-      title: 'Communauté',
-      items: [
-        { id: 'prayerGroups', title: 'Groupes de prière', icon: 'people-outline', screen: 'PrayerGroups' },
-        { id: 'messages', title: 'Messages', icon: 'chatbubble-outline', screen: 'Messages' },
       ],
     },
     {
       title: 'Paramètres',
       items: [
         { id: 'settings', title: 'Paramètres', icon: 'settings-outline', screen: 'Settings' },
-        { id: 'notifications', title: 'Notifications', icon: 'notifications-outline', screen: null },
+        { id: 'bible', title: 'La Bible', icon: 'book-outline', screen: 'Bible' },
       ],
     },
   ];
@@ -39,13 +64,30 @@ export default function ProfileScreen({ navigation }) {
         {/* Header Profile */}
         <View style={styles.header}>
           <View style={styles.avatarContainer}>
-            <Image source={require('../../assets/logo.png')} style={styles.avatar} resizeMode="contain" />
-            <View style={styles.avatarBadge}>
-              <Ionicons name="checkmark" size={14} color="#FFF" />
-            </View>
+            {user?.photoURL ? (
+              <Image source={{ uri: user.photoURL }} style={styles.avatar} />
+            ) : (
+              <View style={[styles.avatar, styles.avatarPlaceholder]}>
+                <Ionicons name="person" size={40} color={COLORS.textTertiary} />
+              </View>
+            )}
+            {user && (
+              <View style={styles.avatarBadge}>
+                <Ionicons name="checkmark" size={14} color="#FFF" />
+              </View>
+            )}
           </View>
-          <Text style={styles.userName}>Jean Dupont</Text>
-          <Text style={styles.userEmail}>jean.dupont@email.com</Text>
+          <Text style={styles.userName}>{user ? (user.displayName || 'Utilisateur') : 'Invité'}</Text>
+          <Text style={styles.userEmail}>{user ? user.email : 'Connectez-vous pour plus de fonctionnalités'}</Text>
+          
+          {!user && (
+            <TouchableOpacity 
+              style={styles.loginHeaderBtn}
+              onPress={() => navigation.navigate('Auth')}
+            >
+              <Text style={styles.loginHeaderBtnText}>Se connecter</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* Quick Actions */}
@@ -72,8 +114,8 @@ export default function ProfileScreen({ navigation }) {
         {/* Stats */}
         <View style={styles.statsContainer}>
           {[
-            { label: 'Vidéos vues', value: '24', icon: 'play-circle', color: COLORS.primary },
-            { label: 'Témoignages', value: '8', icon: 'heart', color: COLORS.tertiary },
+            { label: 'Mes Vidéos', value: stats.videos.toString(), icon: 'play-circle', color: COLORS.primary },
+            { label: 'Mes Témoignages', value: stats.testimonies.toString(), icon: 'heart', color: COLORS.tertiary },
           ].map((stat, i) => (
             <View key={i} style={styles.statCard}>
               {/* Background Icon */}
@@ -117,14 +159,25 @@ export default function ProfileScreen({ navigation }) {
         ))}
 
         {/* Logout */}
-        <TouchableOpacity
-          style={styles.logoutBtn}
-          onPress={() => navigation.reset({ index: 0, routes: [{ name: 'Auth' }] })}
-          activeOpacity={0.7}
-        >
-          <Ionicons name="log-out-outline" size={20} color={COLORS.error} />
-          <Text style={styles.logoutText}>Se déconnecter</Text>
-        </TouchableOpacity>
+        {user ? (
+          <TouchableOpacity
+            style={styles.logoutBtn}
+            onPress={handleLogout}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="log-out-outline" size={20} color={COLORS.error} />
+            <Text style={styles.logoutText}>Se déconnecter</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            style={[styles.logoutBtn, { borderColor: COLORS.primary }]}
+            onPress={() => navigation.navigate('Auth')}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="log-in-outline" size={20} color={COLORS.primary} />
+            <Text style={[styles.logoutText, { color: COLORS.primary }]}>Se connecter</Text>
+          </TouchableOpacity>
+        )}
 
         {/* App Info */}
         <View style={styles.appInfo}>
@@ -163,6 +216,11 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 44,
   },
+  avatarPlaceholder: {
+    backgroundColor: '#F3F4F6',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   avatarBadge: {
     position: 'absolute',
     bottom: 2,
@@ -186,6 +244,21 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: COLORS.textSecondary,
     fontWeight: '500',
+    marginBottom: 16,
+    textAlign: 'center',
+    paddingHorizontal: 40,
+  },
+  loginHeaderBtn: {
+    backgroundColor: COLORS.primary,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
+    marginTop: 8,
+  },
+  loginHeaderBtnText: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+    fontSize: 14,
   },
   quickActionsContainer: {
     flexDirection: 'row',

@@ -8,6 +8,7 @@ import {
   TextInput,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { listenContentByType } from '../services/contentService';
 import { COLORS, SPACING, FONT_SIZES, FONT_WEIGHTS, BORDER_RADIUS, SHADOWS, MOCK_VIDEOS } from '../constants/theme';
 import VideoCard from '../components/VideoCard';
@@ -42,42 +43,59 @@ export default function VideosScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
+      {/* Header Moderne */}
+      <LinearGradient
+        colors={['#FFFFFF', '#FAFBFF']}
+        style={styles.header}
+      >
         <View style={styles.headerTop}>
-          <View>
+          <View style={styles.headerLeft}>
             <Text style={styles.headerTitle}>Vidéos</Text>
-            <Text style={styles.headerCount}>
-              {filteredVideos.length} vidéo{filteredVideos.length > 1 ? 's' : ''}
-            </Text>
+            <View style={styles.countBadge}>
+              <Ionicons name="play-circle" size={14} color="#A855F7" />
+              <Text style={styles.countText}>
+                {`${filteredVideos.length}`} vidéo{filteredVideos.length > 1 ? 's' : ''}
+              </Text>
+            </View>
           </View>
           <TouchableOpacity
             style={styles.addButton}
             onPress={() => navigation.navigate('AddContent')}
-            activeOpacity={0.7}
+            activeOpacity={0.8}
           >
-            <Ionicons name="add" size={24} color={COLORS.primary} />
+            <LinearGradient
+              colors={['#A855F7', '#7C3AED']}
+              style={styles.addGradient}
+            >
+              <Ionicons name="add" size={24} color="#FFF" />
+            </LinearGradient>
           </TouchableOpacity>
         </View>
 
-        {/* Search Bar */}
+        {/* Search Bar Moderne */}
         <View style={styles.searchContainer}>
-          <Ionicons name="search-outline" size={20} color={COLORS.textTertiary} />
+          <View style={styles.searchIconBox}>
+            <Ionicons name="search-outline" size={18} color="#A855F7" />
+          </View>
           <TextInput
             style={styles.searchInput}
             placeholder="Rechercher une vidéo..."
-            placeholderTextColor={COLORS.textTertiary}
+            placeholderTextColor="#9CA3AF"
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
           {searchQuery !== '' && (
-            <TouchableOpacity onPress={() => setSearchQuery('')} activeOpacity={0.6}>
-              <Ionicons name="close-circle" size={20} color={COLORS.textTertiary} />
+            <TouchableOpacity 
+              onPress={() => setSearchQuery('')} 
+              activeOpacity={0.6}
+              style={styles.clearBtn}
+            >
+              <Ionicons name="close-circle" size={20} color="#9CA3AF" />
             </TouchableOpacity>
           )}
         </View>
 
-        {/* View Mode Selector */}
+        {/* View Mode Selector - Design épuré */}
         <View style={styles.viewModeContainer}>
           {viewModes.map((mode) => (
             <TouchableOpacity
@@ -87,12 +105,12 @@ export default function VideosScreen({ navigation }) {
                 viewMode === mode.id && styles.viewModeButtonActive,
               ]}
               onPress={() => setViewMode(mode.id)}
-              activeOpacity={0.7}
+              activeOpacity={0.8}
             >
               <Ionicons
                 name={mode.icon}
                 size={18}
-                color={viewMode === mode.id ? COLORS.primary : COLORS.textSecondary}
+                color={viewMode === mode.id ? '#A855F7' : '#6B7280'}
               />
               <Text
                 style={[
@@ -105,7 +123,7 @@ export default function VideosScreen({ navigation }) {
             </TouchableOpacity>
           ))}
         </View>
-      </View>
+      </LinearGradient>
 
       {/* Content */}
       <ScrollView
@@ -163,139 +181,195 @@ export default function VideosScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: '#FAFBFF',
   },
   header: {
     paddingTop: 50,
-    paddingHorizontal: SPACING.base,
-    paddingBottom: SPACING.base,
-    backgroundColor: COLORS.background,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.03,
+    shadowRadius: 8,
+    elevation: 2,
   },
   headerTop: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: SPACING.base,
+    alignItems: 'flex-start',
+    marginBottom: 20,
+  },
+  headerLeft: {
+    flex: 1,
   },
   headerTitle: {
-    fontSize: FONT_SIZES.xxl,
-    fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.text,
+    fontSize: 32,
+    fontWeight: '800',
+    color: '#111827',
+    letterSpacing: -0.8,
+    marginBottom: 8,
   },
-  headerCount: {
-    fontSize: FONT_SIZES.sm,
-    color: COLORS.textSecondary,
-    marginTop: 4,
-    fontWeight: FONT_WEIGHTS.normal,
+  countBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#F3E8FF',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+    alignSelf: 'flex-start',
+  },
+  countText: {
+    fontSize: 13,
+    color: '#A855F7',
+    fontWeight: '700',
   },
   addButton: {
-    width: 40,
-    height: 40,
-    borderRadius: BORDER_RADIUS.md,
-    backgroundColor: COLORS.primaryBg,
+    width: 48,
+    height: 48,
+    borderRadius: 14,
+    overflow: 'hidden',
+    shadowColor: '#A855F7',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  addGradient: {
+    width: '100%',
+    height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.gray50,
-    borderRadius: BORDER_RADIUS.md,
-    paddingHorizontal: SPACING.base,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    paddingHorizontal: 14,
     paddingVertical: 12,
-    gap: SPACING.sm,
-    marginBottom: SPACING.base,
+    gap: 10,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  searchIconBox: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    backgroundColor: '#F3E8FF',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   searchInput: {
     flex: 1,
-    fontSize: FONT_SIZES.md,
-    color: COLORS.text,
+    fontSize: 15,
+    color: '#111827',
+    fontWeight: '500',
     padding: 0,
+  },
+  clearBtn: {
+    padding: 4,
   },
   viewModeContainer: {
     flexDirection: 'row',
-    gap: SPACING.sm,
+    gap: 10,
   },
   viewModeButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: SPACING.base,
-    paddingVertical: SPACING.sm,
-    borderRadius: BORDER_RADIUS.md,
-    backgroundColor: COLORS.gray50,
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 14,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1.5,
+    borderColor: '#E5E7EB',
   },
   viewModeButtonActive: {
-    backgroundColor: COLORS.primaryBg,
+    backgroundColor: '#F3E8FF',
+    borderColor: '#A855F7',
   },
   viewModeText: {
-    fontSize: FONT_SIZES.sm,
-    fontWeight: FONT_WEIGHTS.medium,
-    color: COLORS.textSecondary,
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#6B7280',
   },
   viewModeTextActive: {
-    color: COLORS.primary,
-    fontWeight: FONT_WEIGHTS.semibold,
+    color: '#A855F7',
+    fontWeight: '700',
   },
   content: {
     flex: 1,
   },
   contentContainer: {
-    paddingBottom: SPACING.xxxl,
+    paddingBottom: 40,
   },
   videosContainer: {
-    padding: SPACING.base,
+    padding: 16,
   },
-  // Grid View (2 colonnes)
   gridView: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: SPACING.base,
+    gap: 14,
   },
   gridItem: {
     width: '48%',
   },
-  // List View (1 colonne)
   listView: {
-    gap: SPACING.base,
+    gap: 16,
   },
   emptyState: {
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 100,
-    paddingHorizontal: SPACING.base,
+    paddingHorizontal: 20,
   },
   emptyIcon: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: COLORS.gray50,
+    width: 88,
+    height: 88,
+    borderRadius: 24,
+    backgroundColor: '#F3F4F6',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: SPACING.base,
+    marginBottom: 20,
   },
   emptyTitle: {
-    fontSize: FONT_SIZES.lg,
-    fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.text,
-    marginBottom: SPACING.xs,
+    fontSize: 20,
+    fontWeight: '800',
+    color: '#111827',
+    marginBottom: 8,
+    letterSpacing: -0.3,
   },
   emptyText: {
-    fontSize: FONT_SIZES.md,
-    color: COLORS.textSecondary,
+    fontSize: 15,
+    color: '#6B7280',
     textAlign: 'center',
-    marginBottom: SPACING.base,
+    marginBottom: 24,
+    lineHeight: 22,
   },
   resetBtn: {
-    backgroundColor: COLORS.primary,
-    paddingHorizontal: SPACING.xl,
-    paddingVertical: SPACING.md,
-    borderRadius: BORDER_RADIUS.md,
-    ...SHADOWS.sm,
+    backgroundColor: '#A855F7',
+    paddingHorizontal: 28,
+    paddingVertical: 14,
+    borderRadius: 14,
+    shadowColor: '#A855F7',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
   resetBtnText: {
-    color: COLORS.textInverse,
-    fontSize: FONT_SIZES.md,
-    fontWeight: FONT_WEIGHTS.semibold,
+    color: '#FFF',
+    fontSize: 15,
+    fontWeight: '700',
+    letterSpacing: 0.3,
   },
 });

@@ -1,27 +1,47 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, Image, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { loginUser, registerUser } from '../services/authService';
 
 export default function AuthScreen({ navigation }) {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleAuth = () => {
+  const handleAuth = async () => {
     if (isLogin) {
       if (!email || !password) {
         Alert.alert('Erreur', 'Veuillez remplir tous les champs');
         return;
       }
-      navigation.replace('MainTabs');
+      
+      setLoading(true);
+      try {
+        await loginUser(email, password);
+        navigation.replace('MainTabs');
+      } catch (error) {
+        Alert.alert('Erreur de connexion', error.message);
+      } finally {
+        setLoading(false);
+      }
     } else {
       if (!name || !email || !password) {
         Alert.alert('Erreur', 'Veuillez remplir tous les champs');
         return;
       }
-      navigation.replace('MainTabs');
+      
+      setLoading(true);
+      try {
+        await registerUser(email, password, name);
+        navigation.replace('MainTabs');
+      } catch (error) {
+        Alert.alert('Erreur d\'inscription', error.message);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -100,9 +120,13 @@ export default function AuthScreen({ navigation }) {
             </TouchableOpacity>
           )}
 
-          <TouchableOpacity style={styles.authBtn} onPress={handleAuth}>
+          <TouchableOpacity style={styles.authBtn} onPress={handleAuth} disabled={loading}>
             <LinearGradient colors={['#7C3AED', '#5B21B6']} style={styles.authBtnGradient}>
-              <Text style={styles.authBtnText}>{isLogin ? 'Se connecter' : 'S\'inscrire'}</Text>
+              {loading ? (
+                <ActivityIndicator color="#FFF" />
+              ) : (
+                <Text style={styles.authBtnText}>{isLogin ? 'Se connecter' : 'S\'inscrire'}</Text>
+              )}
             </LinearGradient>
           </TouchableOpacity>
 

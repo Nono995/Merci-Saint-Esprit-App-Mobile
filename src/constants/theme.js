@@ -371,6 +371,7 @@ export const MOCK_VIDEOS = [
     createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
     duration: '45:30',
     mediaUrl: 'https://res.cloudinary.com/dldtb68nn/video/upload/v1764670052/g1ldnkaqtuv7abanuvxn.mp4',
+    thumbnailUrl: 'https://res.cloudinary.com/dldtb68nn/video/upload/v1764670052/g1ldnkaqtuv7abanuvxn.jpg',
     status: 'published',
   },
   {
@@ -385,6 +386,7 @@ export const MOCK_VIDEOS = [
     createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
     duration: '12:15',
     mediaUrl: 'https://res.cloudinary.com/dldtb68nn/video/upload/v1764670052/g1ldnkaqtuv7abanuvxn.mp4',
+    thumbnailUrl: 'https://res.cloudinary.com/dldtb68nn/video/upload/v1764670052/g1ldnkaqtuv7abanuvxn.jpg',
     status: 'published',
   },
   {
@@ -399,6 +401,7 @@ export const MOCK_VIDEOS = [
     createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
     duration: '38:45',
     mediaUrl: 'https://res.cloudinary.com/dldtb68nn/video/upload/v1764670052/g1ldnkaqtuv7abanuvxn.mp4',
+    thumbnailUrl: 'https://res.cloudinary.com/dldtb68nn/video/upload/v1764670052/g1ldnkaqtuv7abanuvxn.jpg',
     status: 'published',
   },
 ];

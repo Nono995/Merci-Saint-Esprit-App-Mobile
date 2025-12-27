@@ -1,14 +1,15 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
+import { FIREBASE_CONFIG } from '../config/env';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyAv3yrsendIELQQgGlYp-M1s7F6Y9sV8oI',
-  authDomain: 'church-app-backend.firebaseapp.com',
-  projectId: 'church-app-backend',
-  storageBucket: 'church-app-backend.firebasestorage.app',
-  messagingSenderId: '179363960794',
-  appId: '1:179363960794:web:46a44a09a453868f4552e3',
+  apiKey: FIREBASE_CONFIG.API_KEY,
+  authDomain: FIREBASE_CONFIG.AUTH_DOMAIN,
+  projectId: FIREBASE_CONFIG.PROJECT_ID,
+  storageBucket: FIREBASE_CONFIG.STORAGE_BUCKET,
+  messagingSenderId: FIREBASE_CONFIG.MESSAGING_SENDER_ID,
+  appId: FIREBASE_CONFIG.APP_ID,
 };
 
 console.log('===== FIREBASE INITIALIZING =====');

@@ -91,7 +91,7 @@ export default function PremiumHeader({
                   {messagesCount > 0 && (
                     <View style={styles.badge}>
                       <Text style={styles.badgeText}>
-                        {messagesCount > 9 ? '9+' : messagesCount}
+                        {messagesCount > 9 ? '9+' : `${messagesCount}`}
                       </Text>
                     </View>
                   )}
@@ -113,7 +113,7 @@ export default function PremiumHeader({
                   {notificationsCount > 0 && (
                     <View style={styles.badge}>
                       <Text style={styles.badgeText}>
-                        {notificationsCount > 9 ? '9+' : notificationsCount}
+                        {notificationsCount > 9 ? '9+' : `${notificationsCount}`}
                       </Text>
                     </View>
                   )}

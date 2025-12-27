@@ -17,7 +17,7 @@ export const LoadingSpinner = ({
   return (
     <View style={containerStyle}>
       <ActivityIndicator size={size} color={spinnerColor} />
-      {text && (
+      {!!text && (
         <Text style={[styles.text, { color: spinnerColor }]}> 
           {text}
         </Text>

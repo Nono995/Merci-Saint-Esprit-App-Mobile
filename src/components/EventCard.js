@@ -85,14 +85,14 @@ const EventCard = ({ event, onPress }) => {
             </View>
           </View>
           
-          {event.description && (
+          {!!event.description && (
             <Text style={styles.description} numberOfLines={2}>
               {event.description}
             </Text>
           )}
 
           <View style={styles.footer}>
-            {event.location && (
+            {!!event.location && (
               <View style={styles.metaItem}>
                 <Ionicons name="location-outline" size={14} color={COLORS.textTertiary} />
                 <Text style={styles.metaText} numberOfLines={1}>
@@ -101,7 +101,7 @@ const EventCard = ({ event, onPress }) => {
               </View>
             )}
 
-            {event.attendees && (
+            {!!event.attendees && event.attendees > 0 && (
               <View style={[styles.attendeesContainer, { backgroundColor: eventStyle.bg }]}>
                 <Ionicons name="people-outline" size={14} color={eventStyle.color} />
                 <Text style={[styles.attendeesText, { color: eventStyle.color }]}>{event.attendees}</Text>

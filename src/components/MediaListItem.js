@@ -99,7 +99,7 @@ export default function MediaListItem({
             </Text>
             <View style={styles.meta}>
               <Ionicons name="time-outline" size={12} color={COLORS.gray500} />
-              <Text style={styles.duration}>{duration}</Text>
+              <Text style={styles.duration}>{`${duration || '0:00'}`}</Text>
               {type === 'audio' && (
                 <>
                   <View style={styles.metaDot} />

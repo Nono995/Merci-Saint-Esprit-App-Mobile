@@ -1,0 +1,163 @@
+===========================================
+  COMMANDES DE DÉPLOIEMENT - AIDE-MÉMOIRE
+===========================================
+
+📱 TESTER MAINTENANT (Expo Go)
+-------------------------------
+npx expo start --tunnel
+
+→ Scanne le QR code avec Expo Go
+→ Instantané, gratuit, parfait pour dev
+
+
+🏗️ BUILD APK ANDROID (Vraie app)
+----------------------------------
+1. Installer EAS CLI:
+   npm install -g eas-cli
+
+2. Se connecter:
+   eas login
+
+3. Build Preview (Prototype):
+   eas build --platform android --profile preview
+
+4. Build Production (Final):
+   eas build --platform android --profile production
+
+→ Attendre 10-20 minutes
+→ Télécharger l'APK depuis le lien fourni
+
+
+📊 VÉRIFIER LES BUILDS
+-----------------------
+eas build:list
+eas build:view
+eas whoami
+
+
+🔄 METTRE À JOUR LA VERSION
+----------------------------
+1. Éditer app.json:
+   "version": "1.0.1"
+   "versionCode": 2
+
+2. Rebuild:
+   eas build --platform android --profile preview
+
+
+🌐 PUBLIER SUR EXPO GO
+-----------------------
+npx expo publish
+
+→ Génère un lien exp://...
+→ Partager avec testeurs
+
+
+🚀 SCRIPT AUTOMATIQUE (Windows)
+--------------------------------
+Double-cliquer sur: build-android.bat
+
+
+📱 INSTALLER L'APK
+-------------------
+1. Télécharger l'APK sur téléphone
+2. Autoriser "Sources inconnues"
+3. Ouvrir le fichier APK
+4. Installer
+
+
+🔗 LIENS UTILES
+----------------
+Dashboard Expo: https://expo.dev
+Documentation: https://docs.expo.dev/build/introduction/
+Support: https://chat.expo.dev/
+
+
+⚡ COMMANDES RAPIDES
+--------------------
+# Démarrer en dev
+npm start
+
+# Démarrer en tunnel
+npx expo start --tunnel
+
+# Build Android Preview
+eas build -p android --profile preview
+
+# Build Android Production
+eas build -p android --profile production
+
+# Voir les builds
+eas build:list
+
+# Se connecter
+eas login
+
+# Vérifier qui est connecté
+eas whoami
+
+
+🐛 DÉPANNAGE
+-------------
+# EAS non trouvé
+npm install -g eas-cli
+
+# Pas connecté
+eas login
+
+# Build échoué
+- Vérifier app.json
+- Vérifier les dépendances
+- Réessayer
+
+# APK ne s'installe pas
+- Activer "Sources inconnues"
+- Vérifier l'espace disque
+- Télécharger à nouveau
+
+
+✅ CHECKLIST AVANT BUILD
+-------------------------
+[ ] Testé sur Expo Go
+[ ] Pas d'erreurs console
+[ ] Firebase configuré
+[ ] Cloudinary configuré
+[ ] Version mise à jour
+[ ] Icônes présents
+
+
+🎯 WORKFLOW RECOMMANDÉ
+-----------------------
+1. Développer et tester sur Expo Go
+2. Build Preview pour prototype
+3. Partager avec testeurs
+4. Collecter retours
+5. Itérer
+6. Build Production pour lancement
+
+
+💰 LIMITES GRATUITES
+---------------------
+- 30 builds/mois gratuits
+- Illimité sur Expo Go
+- Pas de limite de téléchargements
+
+
+📞 BESOIN D'AIDE?
+------------------
+- Documentation: docs.expo.dev
+- Discord: chat.expo.dev
+- Forums: forums.expo.dev
+
+
+===========================================
+  COMMANDE LA PLUS IMPORTANTE
+===========================================
+
+Pour tester MAINTENANT:
+→ npx expo start --tunnel
+
+Pour build APK:
+→ eas build --platform android --profile preview
+
+===========================================

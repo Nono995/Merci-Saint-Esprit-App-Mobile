@@ -64,7 +64,7 @@ export default function SearchScreen({ navigation }) {
       <ScrollView style={styles.content}>
         {query.length > 0 ? (
           <View>
-            <Text style={styles.resultsTitle}>Résultats ({results.length})</Text>
+            <Text style={styles.resultsTitle}>Résultats ({`${results.length}`})</Text>
             {results.map(result => (
               <TouchableOpacity key={result.id} style={styles.resultCard}>
                 <View style={styles.resultIcon}>
