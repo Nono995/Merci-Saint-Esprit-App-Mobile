@@ -9,6 +9,7 @@ import { COLORS } from './src/constants/theme';
 import { AuthProvider } from './src/contexts/AuthContext';
 import { AdminAuthProvider } from './src/contexts/AdminAuthContext';
 import { NotificationProvider, useNotifications } from './src/contexts/NotificationContext';
+import './src/styles/web-fix.css';
 
 import HomeScreen from './src/screens/HomeScreen';
 import TestimonyScreen from './src/screens/TestimonyScreen';
