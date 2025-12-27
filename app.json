@@ -42,6 +42,13 @@
       "backgroundColor": "#FAFAFA",
       "description": "Application de l'église Merci Saint-Esprit - Vidéos, Podcasts et Bible.",
       "display": "standalone",
+      "orientation": "portrait",
+      "barStyle": "black-translucent",
+      "meta": {
+        "apple-mobile-web-app-capable": "yes",
+        "apple-mobile-web-app-status-bar-style": "black-translucent",
+        "viewport": "width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+      },
       "config": {
         "firebase": {
           "apiKey": "AIzaSyAv3yrsendIELQQgGlYp-M1s7F6Y9sV8oI",
