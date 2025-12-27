@@ -44,12 +44,12 @@
       "display": "standalone",
       "config": {
         "firebase": {
-          "apiKey": "votre-api-key",
-          "authDomain": "merci-saint-esprit.firebaseapp.com",
-          "projectId": "merci-saint-esprit",
-          "storageBucket": "merci-saint-esprit.appspot.com",
-          "messagingSenderId": "votre-id",
-          "appId": "votre-app-id"
+          "apiKey": "AIzaSyAv3yrsendIELQQgGlYp-M1s7F6Y9sV8oI",
+          "authDomain": "church-app-backend.firebaseapp.com",
+          "projectId": "church-app-backend",
+          "storageBucket": "church-app-backend.firebasestorage.app",
+          "messagingSenderId": "179363960794",
+          "appId": "1:179363960794:web:46a44a09a453868f4552e3"
         }
       }
     },
