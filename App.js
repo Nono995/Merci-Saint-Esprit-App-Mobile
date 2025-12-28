@@ -41,6 +41,30 @@ import AnnouncementsScreen from './src/screens/AnnouncementsScreen';
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
+const linking = {
+  config: {
+    screens: {
+      IntroSliders: 'intro',
+      MainTabs: {
+        screens: {
+          Accueil: 'home',
+          Vidéos: 'videos',
+          Bible: 'bible',
+          Témoignages: 'testimonies',
+          Profil: 'profile',
+        },
+      },
+      VideoPlayer: 'video/:id',
+      Podcast: 'podcast',
+      Events: 'events',
+      BibleReader: 'bible/read',
+      Auth: 'auth',
+      Onboarding: 'welcome',
+      Dons: 'donation',
+    },
+  },
+};
+
 function MainTabs() {
   const { unreadCount = 0 } = useNotifications();
   
@@ -133,7 +157,7 @@ export default function App() {
     <AuthProvider>
       <AdminAuthProvider>
         <NotificationProvider>
-          <NavigationContainer>
+          <NavigationContainer linking={linking}>
             <StatusBar style="dark" />
             <RootNavigator />
           </NavigationContainer>

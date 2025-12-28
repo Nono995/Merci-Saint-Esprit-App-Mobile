@@ -205,7 +205,7 @@ export default function HomeScreen({ navigation }) {
         <TouchableOpacity 
           style={styles.searchBar}
           activeOpacity={0.9}
-          onPress={() => {/* TODO: Navigate to search */}}
+          onPress={() => navigation.navigate('Search')}
         >
           <View style={styles.searchIconWrapper}>
             <Ionicons name="search-outline" size={20} color={COLORS.primary} />
