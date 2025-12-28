@@ -1,4 +1,5 @@
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image, Alert, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../constants/theme';
 import { useAuth } from '../contexts/AuthContext';
@@ -7,6 +8,7 @@ import { listenUserContent } from '../services/contentService';
 import React, { useEffect, useState } from 'react';
 
 export default function ProfileScreen({ navigation }) {
+  const insets = useSafeAreaInsets();
   const { user, auth } = useAuth();
   const [stats, setStats] = useState({ videos: 0, testimonies: 0 });
 
@@ -62,7 +64,7 @@ export default function ProfileScreen({ navigation }) {
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header Profile */}
-        <View style={styles.header}>
+        <View style={[styles.header, { paddingTop: Math.max(insets.top, 40) }]}>
           <View style={styles.avatarContainer}>
             {user?.photoURL ? (
               <Image source={{ uri: user.photoURL }} style={styles.avatar} />

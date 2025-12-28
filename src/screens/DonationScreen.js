@@ -3,7 +3,7 @@ import { View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput, Alert 
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
-export default function DonationScreen() {
+export default function DonationScreen({ navigation }) {
   const [selectedAmount, setSelectedAmount] = useState(null);
   const [customAmount, setCustomAmount] = useState('');
   const [donationType, setDonationType] = useState('unique');
@@ -38,86 +38,95 @@ export default function DonationScreen() {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <LinearGradient colors={['#F59E0B', '#D97706']} style={styles.header}>
-        <Ionicons name="heart" size={48} color="#FFF" />
-        <Text style={styles.headerTitle}>Faire un don</Text>
-        <Text style={styles.headerSubtitle}>Soutenez notre mission et bénissez la communauté</Text>
-      </LinearGradient>
+    <View style={styles.container}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <LinearGradient colors={['#F59E0B', '#D97706']} style={styles.header}>
+          <TouchableOpacity 
+            style={styles.backButton} 
+            onPress={() => navigation.goBack()}
+          >
+            <Ionicons name="arrow-back" size={24} color="#FFF" />
+          </TouchableOpacity>
+          <Ionicons name="heart" size={48} color="#FFF" />
+          <Text style={styles.headerTitle}>Faire un don</Text>
+          <Text style={styles.headerSubtitle}>Soutenez notre mission et bénissez la communauté</Text>
+        </LinearGradient>
 
-      <View style={styles.content}>
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Type de don</Text>
-          <View style={styles.typeGrid}>
-            {types.map(type => (
-              <TouchableOpacity key={type.id} style={[styles.typeCard, donationType === type.id && styles.typeCardActive]} onPress={() => setDonationType(type.id)}>
-                <Ionicons name={type.icon} size={24} color={donationType === type.id ? '#F59E0B' : '#6B7280'} />
-                <Text style={[styles.typeLabel, donationType === type.id && styles.typeLabelActive]}>{type.label}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Montant</Text>
-          <View style={styles.amountGrid}>
-            {amounts.map(amount => (
-              <TouchableOpacity key={amount} style={[styles.amountCard, selectedAmount === amount && styles.amountCardActive]} onPress={() => { setSelectedAmount(amount); setCustomAmount(''); }}>
-                <Text style={[styles.amountText, selectedAmount === amount && styles.amountTextActive]}>{amount}€</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-          <View style={styles.customBox}>
-            <Text style={styles.customLabel}>Montant personnalisé</Text>
-            <TextInput style={styles.customInput} value={customAmount} onChangeText={(text) => { setCustomAmount(text); setSelectedAmount(null); }} placeholder="0" keyboardType="numeric" />
-          </View>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Méthode de paiement</Text>
-          {methods.map(method => (
-            <TouchableOpacity key={method.id} style={[styles.methodCard, paymentMethod === method.id && styles.methodCardActive]} onPress={() => setPaymentMethod(method.id)}>
-              <Ionicons name={method.icon} size={24} color={paymentMethod === method.id ? '#F59E0B' : '#6B7280'} />
-              <Text style={[styles.methodLabel, paymentMethod === method.id && styles.methodLabelActive]}>{method.label}</Text>
-              {paymentMethod === method.id && <Ionicons name="checkmark-circle" size={20} color="#10B981" />}
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        <View style={styles.impactBox}>
-          <Text style={styles.impactTitle}>Impact de votre don</Text>
-          {[
-            { icon: 'people-outline', text: 'Soutien aux familles' },
-            { icon: 'school-outline', text: 'Programmes éducatifs' },
-            { icon: 'construct-outline', text: 'Maintenance des locaux' },
-            { icon: 'globe-outline', text: 'Missions et évangélisation' }
-          ].map((item, i) => (
-            <View key={i} style={styles.impactItem}>
-              <Ionicons name={item.icon} size={20} color="#F59E0B" />
-              <Text style={styles.impactText}>{item.text}</Text>
+        <View style={styles.content}>
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Type de don</Text>
+            <View style={styles.typeGrid}>
+              {types.map(type => (
+                <TouchableOpacity key={type.id} style={[styles.typeCard, donationType === type.id && styles.typeCardActive]} onPress={() => setDonationType(type.id)}>
+                  <Ionicons name={type.icon} size={24} color={donationType === type.id ? '#F59E0B' : '#6B7280'} />
+                  <Text style={[styles.typeLabel, donationType === type.id && styles.typeLabelActive]}>{type.label}</Text>
+                </TouchableOpacity>
+              ))}
             </View>
-          ))}
-        </View>
+          </View>
 
-        <TouchableOpacity style={styles.donateBtn} onPress={handleDonation}>
-          <LinearGradient colors={['#F59E0B', '#D97706']} style={styles.donateBtnGradient}>
-            <Ionicons name="heart" size={24} color="#FFF" />
-            <Text style={styles.donateBtnText}>Donner {selectedAmount || customAmount || '0'}€</Text>
-          </LinearGradient>
-        </TouchableOpacity>
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Montant</Text>
+            <View style={styles.amountGrid}>
+              {amounts.map(amount => (
+                <TouchableOpacity key={amount} style={[styles.amountCard, selectedAmount === amount && styles.amountCardActive]} onPress={() => { setSelectedAmount(amount); setCustomAmount(''); }}>
+                  <Text style={[styles.amountText, selectedAmount === amount && styles.amountTextActive]}>{amount}€</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            <View style={styles.customBox}>
+              <Text style={styles.customLabel}>Montant personnalisé</Text>
+              <TextInput style={styles.customInput} value={customAmount} onChangeText={(text) => { setCustomAmount(text); setSelectedAmount(null); }} placeholder="0" keyboardType="numeric" />
+            </View>
+          </View>
 
-        <View style={styles.securityBadge}>
-          <Ionicons name="shield-checkmark" size={20} color="#10B981" />
-          <Text style={styles.securityText}>Paiement 100% sécurisé</Text>
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Méthode de paiement</Text>
+            {methods.map(method => (
+              <TouchableOpacity key={method.id} style={[styles.methodCard, paymentMethod === method.id && styles.methodCardActive]} onPress={() => setPaymentMethod(method.id)}>
+                <Ionicons name={method.icon} size={24} color={paymentMethod === method.id ? '#F59E0B' : '#6B7280'} />
+                <Text style={[styles.methodLabel, paymentMethod === method.id && styles.methodLabelActive]}>{method.label}</Text>
+                {paymentMethod === method.id && <Ionicons name="checkmark-circle" size={20} color="#10B981" />}
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          <View style={styles.impactBox}>
+            <Text style={styles.impactTitle}>Impact de votre don</Text>
+            {[
+              { icon: 'people-outline', text: 'Soutien aux familles' },
+              { icon: 'school-outline', text: 'Programmes éducatifs' },
+              { icon: 'construct-outline', text: 'Maintenance des locaux' },
+              { icon: 'globe-outline', text: 'Missions et évangélisation' }
+            ].map((item, i) => (
+              <View key={i} style={styles.impactItem}>
+                <Ionicons name={item.icon} size={20} color="#F59E0B" />
+                <Text style={styles.impactText}>{item.text}</Text>
+              </View>
+            ))}
+          </View>
+
+          <TouchableOpacity style={styles.donateBtn} onPress={handleDonation}>
+            <LinearGradient colors={['#F59E0B', '#D97706']} style={styles.donateBtnGradient}>
+              <Ionicons name="heart" size={24} color="#FFF" />
+              <Text style={styles.donateBtnText}>Donner {selectedAmount || customAmount || '0'}€</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+
+          <View style={styles.securityBadge}>
+            <Ionicons name="shield-checkmark" size={20} color="#10B981" />
+            <Text style={styles.securityText}>Paiement 100% sécurisé</Text>
+          </View>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F9FAFB' },
-  header: { paddingTop: 50, paddingBottom: 40, paddingHorizontal: 20, alignItems: 'center' },
+  header: { paddingTop: 50, paddingBottom: 40, paddingHorizontal: 20, alignItems: 'center', position: 'relative' },
+  backButton: { position: 'absolute', top: 50, left: 20, width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255,255,255,0.2)', alignItems: 'center', justifyContent: 'center', zIndex: 10 },
   headerTitle: { fontSize: 28, fontWeight: '700', color: '#FFF', marginTop: 12, marginBottom: 8 },
   headerSubtitle: { fontSize: 14, color: '#FEF3C7', textAlign: 'center' },
   content: { padding: 20 },

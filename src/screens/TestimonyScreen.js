@@ -8,7 +8,9 @@ import {
   TextInput,
   Modal,
   Alert,
+  Platform,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { listenContentByType, likeContent } from '../services/contentService';
 import { COLORS, SPACING, FONT_SIZES, FONT_WEIGHTS, BORDER_RADIUS, SHADOWS, MOCK_TESTIMONIES } from '../constants/theme';
@@ -17,6 +19,7 @@ import { auth } from '../services/firebaseConfig';
 import * as Device from 'expo-device';
 
 export default function TestimonyScreen() {
+  const insets = useSafeAreaInsets();
   const [testimonies, setTestimonies] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [newTestimony, setNewTestimony] = useState({ title: '', content: '', category: 'Général' });
@@ -85,7 +88,7 @@ export default function TestimonyScreen() {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: Math.max(insets.top, 20) }]}>
         <View style={styles.headerTop}>
           <View>
             <Text style={styles.headerTitle}>Témoignages</Text>

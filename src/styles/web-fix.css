@@ -8,10 +8,5 @@ html, body, #root, [data-contents="true"] {
   background-color: #FAFAFA;
 }
 
-/* Utilisation des safe areas pour le contenu */
-#root {
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
-}
+/* On ne met plus de padding sur #root pour permettre au contenu de passer sous l'encoche */
+/* Le padding sera géré par SafeAreaView ou useSafeAreaInsets dans les composants React */

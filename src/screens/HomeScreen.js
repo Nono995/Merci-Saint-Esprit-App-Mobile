@@ -7,7 +7,9 @@ import {
   TouchableOpacity,
   RefreshControl,
   Dimensions,
+  Platform,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { listenAllContent, listenDailyMessages } from '../services/contentService';
@@ -49,6 +51,7 @@ const STATIC_DAILY_MESSAGES = [
 ];
 
 export default function HomeScreen({ navigation }) {
+  const insets = useSafeAreaInsets();
   const [posts, setPosts] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [dailyMessages, setDailyMessages] = useState(STATIC_DAILY_MESSAGES);
@@ -174,7 +177,7 @@ export default function HomeScreen({ navigation }) {
         colors={['#FFFFFF', '#FAFBFF']}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
-        style={styles.header}
+        style={[styles.header, { paddingTop: Math.max(insets.top, 16) }]}
       >
         <View style={styles.headerTop}>
           <View style={styles.headerLeft}>

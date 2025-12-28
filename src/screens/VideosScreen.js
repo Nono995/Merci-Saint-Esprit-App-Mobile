@@ -6,7 +6,9 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
+  Platform,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { listenContentByType } from '../services/contentService';
@@ -14,6 +16,7 @@ import { COLORS, SPACING, FONT_SIZES, FONT_WEIGHTS, BORDER_RADIUS, SHADOWS, MOCK
 import VideoCard from '../components/VideoCard';
 
 export default function VideosScreen({ navigation }) {
+  const insets = useSafeAreaInsets();
   const [videos, setVideos] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState('grid'); // 'grid', 'list'
@@ -46,7 +49,7 @@ export default function VideosScreen({ navigation }) {
       {/* Header Moderne */}
       <LinearGradient
         colors={['#FFFFFF', '#FAFBFF']}
-        style={styles.header}
+        style={[styles.header, { paddingTop: Math.max(insets.top, 16) }]}
       >
         <View style={styles.headerTop}>
           <View style={styles.headerLeft}>

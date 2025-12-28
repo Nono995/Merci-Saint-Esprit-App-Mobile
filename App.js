@@ -4,7 +4,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Platform } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { COLORS } from './src/constants/theme';
 import { AuthProvider } from './src/contexts/AuthContext';
 import { AdminAuthProvider } from './src/contexts/AdminAuthContext';
@@ -47,11 +48,11 @@ const linking = {
       IntroSliders: 'intro',
       MainTabs: {
         screens: {
-          Accueil: 'home',
-          Vidéos: 'videos',
+          Home: 'home',
+          Videos: 'videos',
           Bible: 'bible',
-          Témoignages: 'testimonies',
-          Profil: 'profile',
+          Testimonies: 'testimonies',
+          Profile: 'profile',
         },
       },
       VideoPlayer: 'video/:id',
@@ -67,17 +68,18 @@ const linking = {
 
 function MainTabs() {
   const { unreadCount = 0 } = useNotifications();
+  const insets = useSafeAreaInsets();
   
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           const icons = {
-            'Accueil': focused ? 'home' : 'home-outline',
-            'Vidéos': focused ? 'play-circle' : 'play-circle-outline',
+            'Home': focused ? 'home' : 'home-outline',
+            'Videos': focused ? 'play-circle' : 'play-circle-outline',
             'Bible': focused ? 'book' : 'book-outline',
-            'Témoignages': focused ? 'heart' : 'heart-outline',
-            'Profil': focused ? 'person' : 'person-outline'
+            'Testimonies': focused ? 'heart' : 'heart-outline',
+            'Profile': focused ? 'person' : 'person-outline'
           };
           
           return (
@@ -90,8 +92,8 @@ function MainTabs() {
         tabBarInactiveTintColor: COLORS.textTertiary,
         headerShown: false,
         tabBarStyle: {
-          height: 60,
-          paddingBottom: 8,
+          height: Platform.OS === 'web' ? 70 : (60 + insets.bottom),
+          paddingBottom: Platform.OS === 'web' ? 12 : (8 + insets.bottom),
           paddingTop: 8,
           borderTopWidth: 1,
           borderTopColor: COLORS.border,
@@ -100,7 +102,11 @@ function MainTabs() {
           shadowColor: '#000',
           shadowOffset: { width: 0, height: -1 },
           shadowOpacity: 0.03,
-          shadowRadius: 4
+          shadowRadius: 4,
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
         },
         tabBarLabelStyle: {
           fontSize: 11,
@@ -108,11 +114,31 @@ function MainTabs() {
         }
       })}
     >
-      <Tab.Screen name="Accueil" component={HomeScreen} />
-      <Tab.Screen name="Vidéos" component={VideosScreen} />
-      <Tab.Screen name="Bible" component={BibleScreen} />
-      <Tab.Screen name="Témoignages" component={TestimonyScreen} />
-      <Tab.Screen name="Profil" component={ProfileScreen} />
+      <Tab.Screen 
+        name="Home" 
+        component={HomeScreen} 
+        options={{ tabBarLabel: 'Accueil' }}
+      />
+      <Tab.Screen 
+        name="Videos" 
+        component={VideosScreen} 
+        options={{ tabBarLabel: 'Vidéos' }}
+      />
+      <Tab.Screen 
+        name="Bible" 
+        component={BibleScreen} 
+        options={{ tabBarLabel: 'Bible' }}
+      />
+      <Tab.Screen 
+        name="Testimonies" 
+        component={TestimonyScreen} 
+        options={{ tabBarLabel: 'Témoignages' }}
+      />
+      <Tab.Screen 
+        name="Profile" 
+        component={ProfileScreen} 
+        options={{ tabBarLabel: 'Profil' }}
+      />
     </Tab.Navigator>
   );
 }
@@ -131,12 +157,10 @@ function RootNavigator() {
       <Stack.Screen name="VideoPlayer" component={VideoPlayerScreen} />
       <Stack.Screen name="AddContent" component={AddContentScreen} />
       <Stack.Screen name="Podcast" component={PodcastScreen} />
-      <Stack.Screen name="Videos" component={VideosScreen} />
       <Stack.Screen name="Live" component={LiveScreen} />
       <Stack.Screen name="Notifications" component={NotificationsScreen} />
       <Stack.Screen name="Messages" component={MessagesScreen} />
       <Stack.Screen name="Chat" component={ChatScreen} />
-      <Stack.Screen name="Bible" component={BibleScreen} />
       <Stack.Screen name="BibleChapters" component={BibleChaptersScreen} />
       <Stack.Screen name="BibleReader" component={BibleReaderScreen} />
       <Stack.Screen name="BibleBookmarks" component={BibleBookmarksScreen} />
@@ -154,15 +178,17 @@ function RootNavigator() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <AdminAuthProvider>
-        <NotificationProvider>
-          <NavigationContainer linking={linking}>
-            <StatusBar style="dark" />
-            <RootNavigator />
-          </NavigationContainer>
-        </NotificationProvider>
-      </AdminAuthProvider>
-    </AuthProvider>
+    <SafeAreaProvider>
+      <AuthProvider>
+        <AdminAuthProvider>
+          <NotificationProvider>
+            <NavigationContainer linking={linking}>
+              <StatusBar style="dark" />
+              <RootNavigator />
+            </NavigationContainer>
+          </NotificationProvider>
+        </AdminAuthProvider>
+      </AuthProvider>
+    </SafeAreaProvider>
   );
 }

@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
-    "sdkVersion": "51.0.0",
+    "sdkVersion": "54.0.0",
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -17,11 +17,18 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.mercisaintesprit.app"
+      "bundleIdentifier": "com.mercisaintesprit.app",
+      "statusBar": {
+        "barStyle": "dark-content"
+      }
     },
     "android": {
       "package": "com.mercisaintesprit.app",
       "versionCode": 1,
+      "statusBar": {
+        "translucent": true,
+        "barStyle": "dark-content"
+      },
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo.png",
         "backgroundColor": "#7C3AED"
@@ -81,7 +88,8 @@
           "photosPermission": "Allow $(PRODUCT_NAME) to access your photos.",
           "savePhotosPermission": "Allow $(PRODUCT_NAME) to save photos."
         }
-      ]
+      ],
+      "expo-font"
     ],
     "extra": {
       "eas": {

@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BIBLE_BOOKS } from '../data/bibleData';
 
 export default function BibleScreen({ navigation }) {
+  const insets = useSafeAreaInsets();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTestament, setActiveTestament] = useState('all');
 
@@ -16,7 +18,10 @@ export default function BibleScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <LinearGradient colors={['#7C3AED', '#5B21B6']} style={styles.header}>
+      <LinearGradient 
+        colors={['#7C3AED', '#5B21B6']} 
+        style={[styles.header, { paddingTop: Math.max(insets.top, 16) }]}
+      >
         <View style={styles.headerTop}>
           <Text style={styles.headerTitle}>La Bible</Text>
           <TouchableOpacity onPress={() => navigation.navigate('BibleBookmarks')} style={styles.bookmarkBtn}>

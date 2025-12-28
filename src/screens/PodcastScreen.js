@@ -59,7 +59,10 @@ export default function PodcastScreen({ navigation }) {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerTop}>
-          <View>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
+            <Ionicons name="arrow-back" size={24} color={COLORS.text} />
+          </TouchableOpacity>
+          <View style={styles.headerInfo}>
             <Text style={styles.headerTitle}>Podcasts</Text>
             <Text style={styles.headerCount}>
               {`${filteredPodcasts.length}`} épisode{filteredPodcasts.length > 1 ? 's' : ''}
@@ -209,6 +212,18 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: SPACING.base,
+  },
+  backBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: COLORS.gray50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  headerInfo: {
+    flex: 1,
   },
   headerTitle: {
     fontSize: FONT_SIZES.xxl,

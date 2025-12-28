@@ -8,18 +8,18 @@ export const NavigationHelper = {
 
   // Navigation des écrans principaux
   goToSearch: (navigation) => navigation.navigate('Search'),
-  goToProfile: (navigation) => navigation.navigate('Profile'),
-  goToEvents: (navigation) => navigation.navigate('MainTabs', { screen: 'Événements' }),
-  goToPrayers: (navigation) => navigation.navigate('MainTabs', { screen: 'Prières' }),
+  goToProfile: (navigation) => navigation.navigate('MainTabs', { screen: 'Profile' }),
+  goToEvents: (navigation) => navigation.navigate('Events'),
+  goToPrayers: (navigation) => navigation.navigate('PrayerRequests'),
 
   // Navigation contextuelle
   goToVideoPlayer: (navigation, post) => navigation.navigate('VideoPlayer', { post }),
-  goToEventDetail: (navigation, event) => navigation.navigate('EventDetail', { event }),
+  goToEventDetail: (navigation, event) => navigation.navigate('Events', { event }),
   goToAddContent: (navigation) => navigation.navigate('AddContent'),
 
   // Navigation d'authentification
-  goToLogin: (navigation) => navigation.navigate('Login'),
-  goToRegister: (navigation) => navigation.navigate('Register'),
+  goToLogin: (navigation) => navigation.navigate('Auth'),
+  goToRegister: (navigation) => navigation.navigate('Auth', { screen: 'Register' }),
 
   // Actions spéciales
   goBack: (navigation) => {

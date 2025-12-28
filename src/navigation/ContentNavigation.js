@@ -8,23 +8,23 @@ export const ContentNavigation = {
         return navigation.navigate('VideoPlayer', { post: item });
 
       case 'event':
-        return navigation.navigate('EventDetail', { event: item });
+        return navigation.navigate('Events', { event: item });
 
       case 'prayer':
-        return navigation.navigate('MainTabs', { screen: 'Prières' });
+        return navigation.navigate('PrayerRequests');
 
       case 'testimony':
-        return navigation.navigate('MainTabs', { screen: 'Témoignages' });
+        return navigation.navigate('MainTabs', { screen: 'Testimonies' });
 
       case 'podcast':
-        return navigation.navigate('MainTabs', { screen: 'Podcasts' });
+        return navigation.navigate('Podcast');
 
       case 'donation':
-        return navigation.navigate('MainTabs', { screen: 'Dons' });
+        return navigation.navigate('Dons');
 
       default:
         // Contenu général - ouvrir dans un navigateur ou modal
-        return navigation.navigate('MainTabs');
+        return navigation.navigate('MainTabs', { screen: 'Home' });
     }
   },
 
@@ -33,17 +33,22 @@ export const ContentNavigation = {
     const categoryMap = {
       'culte': 'Home',
       'direct': 'Live',
-      'événements': 'Événements',
-      'prières': 'Prières',
-      'témoignages': 'Témoignages',
-      'podcasts': 'Podcasts',
+      'événements': 'Events',
+      'prières': 'PrayerRequests',
+      'témoignages': 'Testimonies',
+      'podcasts': 'Podcast',
       'dons': 'Dons',
-      'profil': 'Profil',
+      'profil': 'Profile',
     };
 
     const targetScreen = categoryMap[category.toLowerCase()];
     if (targetScreen) {
-      navigation.navigate('MainTabs', { screen: targetScreen });
+      const tabScreens = ['Home', 'Videos', 'Bible', 'Testimonies', 'Profile'];
+      if (tabScreens.includes(targetScreen)) {
+        navigation.navigate('MainTabs', { screen: targetScreen });
+      } else {
+        navigation.navigate(targetScreen);
+      }
     }
   },
 

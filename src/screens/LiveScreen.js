@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, FlatList, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
 export default function LiveScreen() {
+  const insets = useSafeAreaInsets();
   const [isLive, setIsLive] = useState(false);
   const [viewers, setViewers] = useState(0);
   const [messages, setMessages] = useState([
@@ -33,7 +35,10 @@ export default function LiveScreen() {
 
   return (
     <View style={styles.container}>
-      <LinearGradient colors={['#EF4444', '#DC2626']} style={styles.header}>
+      <LinearGradient 
+        colors={['#EF4444', '#DC2626']} 
+        style={[styles.header, { paddingTop: Math.max(insets.top, 16) }]}
+      >
         <Text style={styles.headerTitle}>Diffusion en direct</Text>
         <Text style={styles.headerSubtitle}>Partagez en temps réel avec votre communauté</Text>
       </LinearGradient>

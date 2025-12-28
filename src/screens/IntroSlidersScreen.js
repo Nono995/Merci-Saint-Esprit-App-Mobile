@@ -5,11 +5,13 @@ import {
   StyleSheet,
   TouchableOpacity,
   Dimensions,
-  SafeAreaView,
+  SafeAreaView as RNSafeAreaView,
   ScrollView,
   Animated,
   StatusBar,
+  Platform,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZES, FONT_WEIGHTS, BORDER_RADIUS } from '../constants/theme';
 
@@ -75,6 +77,7 @@ const onboardingData = [
 ];
 
 export default function IntroSlidersScreen({ navigation }) {
+  const insets = useSafeAreaInsets();
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollViewRef = useRef(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -124,7 +127,7 @@ export default function IntroSlidersScreen({ navigation }) {
   return (
     <View style={[styles.container, { backgroundColor: currentSlide.bgColor }]}>
       <StatusBar barStyle="dark-content" backgroundColor={currentSlide.bgColor} />
-      <SafeAreaView style={styles.safeArea}>
+      <View style={[styles.safeArea, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
         
         <View style={styles.topNav}>
           <View style={styles.logoContainer}>
@@ -271,7 +274,7 @@ export default function IntroSlidersScreen({ navigation }) {
             />
           </TouchableOpacity>
         </View>
-      </SafeAreaView>
+      </View>
     </View>
   );
 }

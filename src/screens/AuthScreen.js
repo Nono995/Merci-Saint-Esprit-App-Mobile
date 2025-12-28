@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, Image, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, Image, ActivityIndicator, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { loginUser, registerUser } from '../services/authService';
 
 export default function AuthScreen({ navigation }) {
+  const insets = useSafeAreaInsets();
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -51,7 +53,10 @@ export default function AuthScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <LinearGradient colors={['#7C3AED', '#5B21B6']} style={styles.header}>
+      <LinearGradient 
+        colors={['#7C3AED', '#5B21B6']} 
+        style={[styles.header, { paddingTop: Math.max(insets.top, 40) }]}
+      >
         <View style={styles.logoContainer}>
           <Image source={require('../../assets/logo.png')} style={styles.logo} resizeMode="contain" />
           <Text style={styles.appName}>Merci Saint-Esprit</Text>
