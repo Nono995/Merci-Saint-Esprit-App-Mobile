@@ -5,6 +5,10 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
+      "source": "/(assets|_expo)/(.*)",
+      "destination": "/$1/$2"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
