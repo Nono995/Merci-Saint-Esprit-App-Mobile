@@ -176,6 +176,7 @@ export default function VideoPlayerScreen({ route, navigation }) {
         <Video 
           ref={video} 
           style={styles.video} 
+          videoStyle={styles.internalVideo}
           source={videoUrl ? { uri: videoUrl } : undefined} 
           useNativeControls={false}
           resizeMode="contain"
@@ -379,8 +380,14 @@ const styles = StyleSheet.create({
     height: 280,
     backgroundColor: '#000',
     position: 'relative',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   video: {
+    width: '100%',
+    height: '100%',
+  },
+  internalVideo: {
     width: '100%',
     height: '100%',
   },
