@@ -3,27 +3,33 @@
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <!-- viewport-fit=cover permet d'utiliser toute la surface, y compris sous l'encoche -->
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
     
     <title>Merci Saint-Esprit</title>
+    <meta name="description" content="Application de l'église Merci Saint-Esprit" />
     
     <!-- PWA primary color -->
     <meta name="theme-color" content="#7C3AED" />
     
+    <!-- manifest.json link -->
+    <link rel="manifest" href="/manifest.json" />
+    
     <!-- iOS support -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="Merci Saint-Esprit" />
-    <link rel="apple-touch-icon" href="/assets/assets/logo.png" />
+    <meta name="apple-mobile-web-app-title" content="Merci SE" />
+    <link rel="apple-touch-icon" href="/assets/logo.png" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/assets/logo.png" />
     
     <style>
-      /* Empêche les marges blanches autour de l'encoche */
       html, body, #root {
         height: 100%;
         margin: 0;
         padding: 0;
         background-color: #FAFAFA;
+        overflow: hidden;
       }
     </style>
   </head>

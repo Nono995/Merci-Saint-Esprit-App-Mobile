@@ -47,6 +47,9 @@
       "favicon": "./assets/logo.png",
       "themeColor": "#7C3AED",
       "backgroundColor": "#FAFAFA",
+      "name": "Merci Saint-Esprit",
+      "shortName": "Merci SE",
+      "lang": "fr",
       "description": "Application de l'église Merci Saint-Esprit - Vidéos, Podcasts et Bible.",
       "display": "standalone",
       "orientation": "portrait",
@@ -54,6 +57,7 @@
       "meta": {
         "apple-mobile-web-app-capable": "yes",
         "apple-mobile-web-app-status-bar-style": "black-translucent",
+        "apple-mobile-web-app-title": "Merci SE",
         "viewport": "width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
       },
       "config": {
