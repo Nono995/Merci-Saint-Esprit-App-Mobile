@@ -87,7 +87,7 @@ export default function IntroSlidersScreen({ navigation }) {
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 600,
-      useNativeDriver: true,
+      useNativeDriver: Platform.OS !== 'web',
     }).start();
   }, []);
 
@@ -96,7 +96,7 @@ export default function IntroSlidersScreen({ navigation }) {
       Animated.timing(anim, {
         toValue: index === currentIndex ? 1 : 0,
         duration: 400,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== 'web',
       }).start();
     });
   }, [currentIndex]);
